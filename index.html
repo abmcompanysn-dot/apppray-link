@@ -2215,8 +2215,8 @@
         let currentFilter = 'all';
 
         // IMPORTANT: Remplacez cette URL par l'URL de votre script Google Apps Script déployé
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznqEPPRCC79rujx_rKALbzHftiJIZ2WP0-F-jPZ-GDNh6zT0sWCwhyyvNOVdmuR4oiMA/exec';
-        const BASE_URL = 'https://praylink-beta.vercel.app';
+        const SCRIPT_URL = '/api/proxy'; // On utilise maintenant notre passerelle
+        const BASE_URL = 'https://praylink-beta.vercel.app'; // L'URL publique de votre site
 
         // Loader functions
         function showLoader() { document.getElementById('loader').classList.remove('hidden'); document.getElementById('loader').classList.add('flex'); }
@@ -6380,7 +6380,6 @@
                 // 1. Vérifier si le nom d'utilisateur est disponible
                 let response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors', // Important pour les requêtes cross-origin
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'checkUser', username: username })
                 });
@@ -6401,7 +6400,6 @@
 
                 response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'createUser', ...userData })
                 });
@@ -6464,7 +6462,6 @@
                     try {
                         const response = await fetch(SCRIPT_URL, {
                             method: 'POST',
-                            mode: 'cors',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ action: 'checkUser', username: loginUsername })
                         });
