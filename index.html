@@ -1,0 +1,2566 @@
+<html lang="fr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrayLink - Messages Anonymes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .app-container {
+            max-width: 375px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                max-width: 100%;
+                box-shadow: none;
+            }
+        }
+        
+        .interactive-btn {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        .pulse-effect {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .response-page {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2d2d2d;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            overflow-y: auto;
+        }
+        
+        .admin-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .admin-section {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+        }
+        
+        .admin-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .admin-input {
+            background: #3d3d3d;
+            border: 1px solid #555;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+            margin: 5px 0;
+        }
+        
+        .game-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 50;
+        }
+        
+        .memory-card {
+            transition: all 0.3s ease;
+        }
+        
+        .memory-card.flipped {
+            background: #10b981 !important;
+        }
+        
+        .context-selector {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            margin: 20px 0;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.absolute{position:absolute}.relative{position:relative}.-right-1{right:-0.25rem}.-top-1{top:-0.25rem}.mx-4{margin-left:1rem;margin-right:1rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-4{margin-left:1rem}.mr-4{margin-right:1rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-12{height:3rem}.h-16{height:4rem}.h-20{height:5rem}.h-32{height:8rem}.h-5{height:1.25rem}.h-screen{height:100vh}.w-12{width:3rem}.w-16{width:4rem}.w-20{width:5rem}.w-32{width:8rem}.w-5{width:1.25rem}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-4{gap:1rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-y-auto{overflow-y:auto}.break-all{word-break:break-all}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-blue-500{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-purple-600{--tw-border-opacity:1;border-color:rgb(147 51 234 / var(--tw-border-opacity, 1))}.border-white{--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.border-opacity-20{--tw-border-opacity:0.2}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-orange-600{--tw-bg-opacity:1;background-color:rgb(234 88 12 / var(--tw-bg-opacity, 1))}.bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-400{--tw-bg-opacity:1;background-color:rgb(250 204 21 / var(--tw-bg-opacity, 1))}.bg-opacity-10{--tw-bg-opacity:0.1}.bg-opacity-20{--tw-bg-opacity:0.2}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-amber-500{--tw-gradient-from:#f59e0b var(--tw-gradient-from-position);--tw-gradient-to:rgb(245 158 11 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-green-500{--tw-gradient-from:#22c55e var(--tw-gradient-from-position);--tw-gradient-to:rgb(34 197 94 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-500{--tw-gradient-from:#6366f1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(99 102 241 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-orange-500{--tw-gradient-from:#f97316 var(--tw-gradient-from-position);--tw-gradient-to:rgb(249 115 22 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-600{--tw-gradient-from:#9333ea var(--tw-gradient-from-position);--tw-gradient-to:rgb(147 51 234 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-blue-600{--tw-gradient-to:#2563eb var(--tw-gradient-to-position)}.to-emerald-600{--tw-gradient-to:#059669 var(--tw-gradient-to-position)}.to-green-600{--tw-gradient-to:#16a34a var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-orange-600{--tw-gradient-to:#ea580c var(--tw-gradient-to-position)}.to-pink-500{--tw-gradient-to:#ec4899 var(--tw-gradient-to-position)}.to-pink-600{--tw-gradient-to:#db2777 var(--tw-gradient-to-position)}.to-red-600{--tw-gradient-to:#dc2626 var(--tw-gradient-to-position)}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-6xl{font-size:3.75rem;line-height:1}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.italic{font-style:italic}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-purple-800{--tw-text-opacity:1;color:rgb(107 33 168 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.placeholder-white::placeholder{--tw-placeholder-opacity:1;color:rgb(255 255 255 / var(--tw-placeholder-opacity, 1))}.placeholder-opacity-60::placeholder{--tw-placeholder-opacity:0.6}.opacity-10{opacity:0.1}.opacity-75{opacity:0.75}.opacity-90{opacity:0.9}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-green-500:hover{--tw-border-opacity:1;border-color:rgb(34 197 94 / var(--tw-border-opacity, 1))}.hover\:border-purple-500:hover{--tw-border-opacity:1;border-color:rgb(168 85 247 / var(--tw-border-opacity, 1))}.hover\:border-yellow-500:hover{--tw-border-opacity:1;border-color:rgb(234 179 8 / var(--tw-border-opacity, 1))}.hover\:bg-opacity-30:hover{--tw-bg-opacity:0.3}.focus\:border-purple-500:focus{--tw-border-opacity:1;border-color:rgb(168 85 247 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+<body class="bg-gray-50">
+
+    <!-- Page de réponse anonyme -->
+    <div id="responsePage" class="response-page hidden">
+        <div class="container mx-auto px-4 py-8 max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl">
+                    💬
+                </div>
+                <h1 class="text-2xl font-bold mb-2">Répondre anonymement</h1>
+                <p class="opacity-90">à <span id="responseRecipient">@utilisateur</span></p>
+            </div>
+
+            <div class="bg-white bg-opacity-10 rounded-2xl p-6 mb-6">
+                <div class="text-sm opacity-75 mb-2">Contexte : <span id="responseContext">Question</span></div>
+                <p id="originalMessage" class="italic">"Quel est ton verset préféré ?"</p>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <textarea id="responseText" placeholder="Écris ta réponse anonyme..." class="w-full p-4 rounded-xl bg-white bg-opacity-10 border border-white border-opacity-20 text-white placeholder-white placeholder-opacity-60 resize-none" rows="4"></textarea>
+            </div>
+
+            <div class="space-y-3 mb-8">
+                <button onclick="sendAnonymousResponse()" class="w-full bg-white text-purple-600 font-bold py-4 rounded-xl interactive-btn">
+                    📤 Envoyer ma réponse
+                </button>
+                <button onclick="addEmoji()" class="w-full bg-white bg-opacity-20 text-white font-medium py-3 rounded-xl interactive-btn">
+                    😊 Ajouter un emoji
+                </button>
+            </div>
+
+            <div class="text-center">
+                <p class="text-sm opacity-75 mb-4">Tu veux aussi recevoir des messages anonymes ?</p>
+                <button onclick="createMyPrayLink()" class="bg-yellow-400 text-gray-900 font-bold px-6 py-3 rounded-full interactive-btn">
+                    🙏 Créer mon PrayLink
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel" style="display: block;">
+        <div class="admin-content">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">⚙️ Administration PrayLink</h1>
+                <button onclick="closeAdminPanel()" class="admin-btn" style="background: #e74c3c;">
+                    ✕ Fermer
+                </button>
+            </div>
+
+            <!-- Configuration -->
+            <div class="admin-section">
+                <h2 class="text-xl font-bold mb-4">🔧 Configuration</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Nom de l'app :</label>
+                        <input type="text" id="appName" class="admin-input" value="PrayLink" placeholder="Nom de l'application">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">URL de base :</label>
+                        <input type="text" id="baseUrl" class="admin-input" value="https://praylink.app" placeholder="URL de base">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Google Apps Script URL :</label>
+                    <input type="text" id="scriptUrl" class="admin-input" placeholder="https://script.google.com/macros/s/YOUR_ID/exec">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Google Sheet ID :</label>
+                    <input type="text" id="sheetId" class="admin-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+                </div>
+                
+                <button onclick="saveConfig()" class="admin-btn">💾 Sauvegarder la configuration</button>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="admin-section">
+                <h2 class="text-xl font-bold mb-4">📊 Statistiques</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <div class="bg-blue-600 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold" id="totalUsers">127</div>
+                        <div class="text-sm opacity-90">Utilisateurs</div>
+                    </div>
+                    <div class="bg-green-600 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold" id="totalMessages">1,543</div>
+                        <div class="text-sm opacity-90">Messages</div>
+                    </div>
+                    <div class="bg-purple-600 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold" id="totalGames">892</div>
+                        <div class="text-sm opacity-90">Parties jouées</div>
+                    </div>
+                    <div class="bg-orange-600 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold" id="totalShares">2,341</div>
+                        <div class="text-sm opacity-90">Partages</div>
+                    </div>
+                </div>
+                
+                <button onclick="refreshStats()" class="admin-btn">🔄 Actualiser</button>
+                <button onclick="exportData()" class="admin-btn" style="background: #2ecc71;">📥 Exporter les données</button>
+            </div>
+
+            <!-- Gestion des contenus avec onglets -->
+            <div class="admin-section">
+                <h2 class="text-xl font-bold mb-4">📝 Gestion des contenus</h2>
+                
+                <!-- Onglets de contenu -->
+                <div class="flex border-b mb-4">
+                    <button onclick="showContentTab('questions')" class="px-4 py-2 border-b-2 font-medium border-blue-500 text-blue-600" id="questionsTab">
+                        ❓ Questions
+                    </button>
+                    <button onclick="showContentTab('verses')" class="px-4 py-2 font-medium text-gray-500" id="versesTab">
+                        📖 Versets
+                    </button>
+                    <button onclick="showContentTab('prayers')" class="px-4 py-2 font-medium text-gray-500" id="prayersTab">
+                        🙏 Prières
+                    </button>
+                    <button onclick="showContentTab('testimonies')" class="px-4 py-2 font-medium text-gray-500" id="testimoniesTab">
+                        ✨ Témoignages
+                    </button>
+                    <button onclick="showContentTab('characters')" class="px-4 py-2 font-medium text-gray-500" id="charactersTab">
+                        👤 Personnages
+                    </button>
+                </div>
+                
+                <!-- Contenu Questions -->
+                <div id="questionsContent" class="content-tab">
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-2">Questions pour le quiz :</h4>
+                        <textarea id="quizQuestions" class="admin-input" rows="6" placeholder="Format: Question | Option1,Option2,Option3,Option4 | IndexCorrect">Qui a construit l'arche ? | Moïse,Noé,Abraham,David | 1
+Combien d'apôtres Jésus avait-il ? | 10,11,12,13 | 2</textarea>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Questions prédéfinies :</h4>
+                        <textarea id="predefinedQuestions" class="admin-input" rows="4" placeholder="Une question par ligne">Quel est ton verset préféré ?
+Comment Dieu t'a-t-il béni récemment ?
+Pour quoi aimerais-tu qu'on prie ?
+Quel témoignage veux-tu partager ?</textarea>
+                    </div>
+                </div>
+                
+                <!-- Contenu Versets -->
+                <div id="versesContent" class="content-tab hidden">
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-2">Versets pour le jeu (avec mots manquants) :</h4>
+                        <textarea id="verseGameData" class="admin-input" rows="6" placeholder="Format: Verset incomplet | Mot manquant | Référence">Car Dieu a tant aimé le monde qu'il a donné son Fils _____ | unique | Jean 3:16
+Je puis tout par celui qui me _____ | fortifie | Philippiens 4:13</textarea>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Versets complets :</h4>
+                        <textarea id="bibleVerses" class="admin-input" rows="4" placeholder="Format: Verset | Référence">Car Dieu a tant aimé le monde qu'il a donné son Fils unique | Jean 3:16
+Je puis tout par celui qui me fortifie | Philippiens 4:13</textarea>
+                    </div>
+                </div>
+                
+                <!-- Contenu Prières -->
+                <div id="prayersContent" class="content-tab hidden">
+                    <div>
+                        <h4 class="font-semibold mb-2">Prières :</h4>
+                        <textarea id="prayersData" class="admin-input" rows="8" placeholder="Format: Titre | Texte de la prière">Prière du matin | Seigneur, merci pour cette nouvelle journée. Guide mes pas et que ta volonté soit faite. Amen.
+Prière de protection | Père céleste, protège ma famille et mes proches. Couvre-nous de ton amour et de ta paix. Amen.</textarea>
+                    </div>
+                </div>
+                
+                <!-- Contenu Témoignages -->
+                <div id="testimoniesContent" class="content-tab hidden">
+                    <div>
+                        <h4 class="font-semibold mb-2">Témoignages :</h4>
+                        <textarea id="testimoniesData" class="admin-input" rows="8" placeholder="Format: Titre | Texte du témoignage">Guérison miraculeuse | Dieu m'a guéri d'une maladie que les médecins ne pouvaient pas soigner. Sa grâce est infinie ! 🙏
+Provision divine | Quand j'étais dans le besoin, Dieu a pourvu de manière inattendue. Il est fidèle ! ✨</textarea>
+                    </div>
+                </div>
+                
+                <!-- Contenu Personnages -->
+                <div id="charactersContent" class="content-tab hidden">
+                    <div>
+                        <h4 class="font-semibold mb-2">Personnages bibliques :</h4>
+                        <textarea id="charactersData" class="admin-input" rows="8" placeholder="Format: Nom | Indice1,Indice2,Indice3">Moïse | J'ai libéré le peuple d'Israël,J'ai reçu les 10 commandements,J'ai séparé la mer Rouge
+David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-3">
+                    <button onclick="saveContent()" class="admin-btn">💾 Sauvegarder le contenu</button>
+                    <button onclick="loadDefaultContent()" class="admin-btn" style="background: #f39c12;">🔄 Charger contenu par défaut</button>
+                    <button onclick="exportContent()" class="admin-btn" style="background: #2ecc71;">📤 Exporter contenu</button>
+                    <button onclick="importContent()" class="admin-btn" style="background: #9b59b6;">📥 Importer contenu</button>
+                </div>
+            </div>
+
+            <!-- Google Apps Script -->
+            <div class="admin-section">
+                <h2 class="text-xl font-bold mb-4">📊 Google Apps Script</h2>
+                
+                <p class="mb-4 text-sm text-gray-300">Configurez Google Sheets comme base de données :</p>
+                
+                <div class="bg-gray-800 p-4 rounded-lg mb-4">
+                    <h4 class="text-sm font-bold mb-2 text-green-400">Instructions de configuration :</h4>
+                    <ol class="text-xs space-y-1 text-gray-300">
+                        <li>1. Créez un nouveau Google Sheet</li>
+                        <li>2. Allez dans Extensions → Apps Script</li>
+                        <li>3. Collez le code Apps Script ci-dessous</li>
+                        <li>4. Déployez comme application web</li>
+                        <li>5. Copiez l'URL de déploiement dans la config</li>
+                    </ol>
+                </div>
+                
+                <div class="space-y-3 mb-4">
+                    <button onclick="generateAppsScript()" class="admin-btn w-full" style="background: #34a853;">📋 Générer le code Apps Script</button>
+                    <button onclick="testConnection()" class="admin-btn w-full" style="background: #4285f4;">🔗 Tester la connexion</button>
+                    <button onclick="createSampleSheet()" class="admin-btn w-full" style="background: #fbbc04;">📄 Créer feuille exemple</button>
+                </div>
+            </div>
+
+            <!-- Déploiement -->
+            <div class="admin-section">
+                <h2 class="text-xl font-bold mb-4">🚀 Déploiement</h2>
+                
+                <p class="mb-4">Déployez votre PrayLink configuré :</p>
+                
+                <div class="space-y-3 mb-4">
+                    <button onclick="downloadApp()" class="admin-btn w-full" style="background: #2ecc71;">📱 Télécharger l'app configurée</button>
+                    <button onclick="generateVercelConfig()" class="admin-btn w-full" style="background: #000;">⚡ Générer config Vercel</button>
+                    <button onclick="generateQR()" class="admin-btn w-full" style="background: #f39c12;">📱 Générer QR Code</button>
+                </div>
+                
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h4 class="text-sm font-bold mb-2 text-green-400">Instructions Vercel :</h4>
+                    <ol class="text-xs space-y-1 text-gray-300">
+                        <li>1. Téléchargez l'app configurée</li>
+                        <li>2. Créez un repo GitHub avec le fichier</li>
+                        <li>3. Connectez le repo à Vercel</li>
+                        <li>4. Déployez automatiquement !</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- Page 1: Accueil -->
+        <div id="welcomePage" class="gradient-bg h-screen flex flex-col justify-center items-center text-white p-8">
+            <div class="text-center mb-12">
+                <div class="w-32 h-32 bg-white rounded-full mx-auto mb-6 flex items-center justify-center text-6xl pulse-effect">
+                    🙏
+                </div>
+                <h1 class="text-4xl font-bold mb-4">PrayLink</h1>
+                <p class="text-lg opacity-90">Messages anonymes bibliques</p>
+            </div>
+            
+            <div class="w-full max-w-sm">
+                <button onclick="goToPage('platformPage')" class="w-full bg-white text-gray-900 font-bold py-4 px-6 rounded-2xl text-lg mb-6 shadow-lg interactive-btn">
+                    🚀 Démarrer
+                </button>
+                
+                <!-- Admin caché - Ctrl+Alt+B -->
+                <div class="text-center">
+                    <span class="text-white opacity-10 text-xs">v2.1</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Choix de plateforme -->
+        <div id="platformPage" class="hidden h-screen bg-white p-6 flex flex-col">
+            <div class="flex items-center mb-8">
+                <button onclick="goToPage('welcomePage')" class="text-2xl interactive-btn">←</button>
+                <h2 class="text-xl font-semibold ml-4">Choisir une plateforme</h2>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center">
+                <p class="text-center text-gray-600 mb-8">Sous quel nom veux-tu utiliser PrayLink ?</p>
+                
+                <div class="space-y-4 mb-8">
+                    <button onclick="selectPlatform('instagram')" class="w-full flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl interactive-btn hover:border-purple-500">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white text-xl mr-4">
+                                📷
+                            </div>
+                            <span class="font-medium">Instagram</span>
+                        </div>
+                        <span class="text-gray-400 text-2xl">→</span>
+                    </button>
+                    
+                    <button onclick="selectPlatform('whatsapp')" class="w-full flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl interactive-btn hover:border-green-500">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white text-xl mr-4">
+                                📱
+                            </div>
+                            <span class="font-medium">WhatsApp</span>
+                        </div>
+                        <span class="text-gray-400 text-2xl">→</span>
+                    </button>
+                    
+                    <button onclick="selectPlatform('snapchat')" class="w-full flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl interactive-btn hover:border-yellow-500">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center text-gray-800 text-xl mr-4">
+                                👻
+                            </div>
+                            <span class="font-medium">Snapchat</span>
+                        </div>
+                        <span class="text-gray-400 text-2xl">→</span>
+                    </button>
+                </div>
+                
+                <button onclick="goToPage('usernamePage')" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl interactive-btn">
+                    Continuer
+                </button>
+            </div>
+        </div>
+
+        <!-- Page 3: Nom d'utilisateur -->
+        <div id="usernamePage" class="hidden h-screen bg-white p-6 flex flex-col">
+            <div class="flex items-center mb-8">
+                <button onclick="goToPage('platformPage')" class="text-2xl interactive-btn">←</button>
+                <h2 class="text-xl font-semibold ml-4">Nom d'utilisateur</h2>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center">
+                <p class="text-center text-gray-600 mb-8">Choisis ton nom d'utilisateur</p>
+                
+                <div class="mb-6">
+                    <input type="text" id="usernameInput" placeholder="@tonnom" class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                
+                <button onclick="goToPage('profilePhotoPage')" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl mb-4 interactive-btn">
+                    Continuer
+                </button>
+            </div>
+        </div>
+
+        <!-- Page 4: Photo de profil -->
+        <div id="profilePhotoPage" class="hidden h-screen bg-white p-6 flex flex-col">
+            <div class="flex items-center mb-8">
+                <button onclick="goToPage('usernamePage')" class="text-2xl interactive-btn">←</button>
+                <h2 class="text-xl font-semibold ml-4">Photo de profil</h2>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center items-center">
+                <p class="text-center text-gray-600 mb-8">Choisis une photo pour ton profil</p>
+                
+                <div class="w-32 h-32 bg-gray-200 rounded-full mb-8 flex items-center justify-center text-4xl cursor-pointer interactive-btn" onclick="selectProfilePhoto()">
+                    <span id="profileEmoji">📷</span>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-4 mb-8">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('🙏')">🙏</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('✨')">✨</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('💫')">💫</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('🌟')">🌟</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('💝')">💝</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('🕊️')">🕊️</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('👼')">👼</div>
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-2xl cursor-pointer interactive-btn" onclick="setProfileEmoji('🎯')">🎯</div>
+                </div>
+                
+                <div class="w-full space-y-3">
+                    <button onclick="goToPage('mainPage')" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl interactive-btn">
+                        Continuer
+                    </button>
+                    <button onclick="goToPage('mainPage')" class="w-full text-gray-500 py-2 interactive-btn">
+                        Ignorer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page principale -->
+        <div id="mainPage" class="hidden h-screen bg-white flex flex-col">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 border-b">
+                <h1 class="text-xl font-bold">PrayLink</h1>
+                <div class="flex items-center space-x-4">
+                    <button onclick="showTab('inbox')" class="relative interactive-btn">
+                        <span class="text-2xl">📬</span>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center pulse-effect" id="messageCount">3</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex border-b">
+                <button onclick="showTab('share')" class="flex-1 py-4 text-center font-medium border-b-2 border-purple-600 text-purple-600 interactive-btn text-gray-500" id="shareTab">
+                    Partager
+                </button>
+                <button onclick="showTab('games')" class="flex-1 py-4 text-center font-medium text-gray-500 interactive-btn" id="gamesTab">
+                    Jeux
+                </button>
+                <button onclick="showTab('inbox')" class="flex-1 py-4 text-center font-medium text-gray-500 interactive-btn" id="inboxTab">
+                    Inbox
+                </button>
+            </div>
+            
+            <!-- Share Content -->
+            <div id="shareContent" class="flex-1 flex flex-col overflow-y-auto">
+                <!-- Profil principal -->
+                <div class="p-6 border-b bg-white">
+                    <div class="flex items-center mb-4">
+                        <div class="w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-3xl shadow-lg mr-4 pulse-effect">
+                            <span id="mainProfileEmoji">🙏</span>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-xl font-bold mb-1" id="mainUsername">@PrayerWarrior</h2>
+                            <p class="text-gray-600 text-sm">Messages anonymes bibliques 📖</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-6">
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-gray-900" id="userMessagesCount">12</div>
+                            <div class="text-xs text-gray-500">Messages</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-gray-900" id="userResponsesCount">8</div>
+                            <div class="text-xs text-gray-500">Réponses</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-gray-900" id="userSharesCount">25</div>
+                            <div class="text-xs text-gray-500">Partages</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lien unique universel -->
+                <div class="context-selector mx-4 mt-4">
+                    <div class="text-center mb-4">
+                        <div class="text-3xl mb-2">🔗</div>
+                        <h3 class="text-lg font-bold">Mon Lien PrayLink</h3>
+                        <p class="text-sm opacity-90">Un seul lien pour tous les contextes</p>
+                    </div>
+                    
+                    <div class="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+                        <div class="text-xs opacity-75 mb-1">Ton lien unique :</div>
+                        <div class="text-sm font-mono break-all" id="universalLink">https://praylink.app/u/prayerwarrior</div>
+                    </div>
+                    
+                    <div class="flex space-x-2 mb-4">
+                        <button onclick="copyUniversalLink()" class="flex-1 bg-white bg-opacity-20 text-white py-2 rounded-lg text-sm font-medium interactive-btn">
+                            📋 Copier
+                        </button>
+                        <button onclick="shareUniversalLink()" class="flex-1 bg-white bg-opacity-20 text-white py-2 rounded-lg text-sm font-medium interactive-btn">
+                            📱 Partager
+                        </button>
+                    </div>
+                    
+                    <div class="text-xs opacity-75 text-center">
+                        Les gens pourront choisir le contexte en répondant
+                    </div>
+                </div>
+                
+                <!-- Sélecteur de contexte pour prévisualiser -->
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4">Prévisualiser avec contexte</h3>
+                    
+                    <div class="space-y-3">
+                        <button onclick="previewContext('question')" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold mb-1">❓ Questions</div>
+                                    <div class="text-sm opacity-90">Questions bibliques et spirituelles</div>
+                                </div>
+                                <span class="text-2xl">→</span>
+                            </div>
+                        </button>
+                        
+                        <button onclick="previewContext('verse')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold mb-1">📖 Versets</div>
+                                    <div class="text-sm opacity-90">Partage de versets inspirants</div>
+                                </div>
+                                <span class="text-2xl">→</span>
+                            </div>
+                        </button>
+                        
+                        <button onclick="previewContext('prayer')" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold mb-1">🙏 Prières</div>
+                                    <div class="text-sm opacity-90">Demandes de prières anonymes</div>
+                                </div>
+                                <span class="text-2xl">→</span>
+                            </div>
+                        </button>
+                        
+                        <button onclick="previewContext('testimony')" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold mb-1">✨ Témoignages</div>
+                                    <div class="text-sm opacity-90">Partage de témoignages</div>
+                                </div>
+                                <span class="text-2xl">→</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <!-- Section de partage de contenu -->
+                    <div class="mt-8">
+                        <h3 class="text-lg font-semibold mb-4">📤 Partager du contenu</h3>
+                        
+                        <div class="space-y-3">
+                            <button onclick="shareRandomVerse()" class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-bold mb-1">📖 Verset du jour</div>
+                                        <div class="text-sm opacity-90">Partager un verset inspirant</div>
+                                    </div>
+                                    <span class="text-2xl">📱</span>
+                                </div>
+                            </button>
+                            
+                            <button onclick="shareRandomPrayer()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-bold mb-1">🙏 Prière du jour</div>
+                                        <div class="text-sm opacity-90">Partager une prière</div>
+                                    </div>
+                                    <span class="text-2xl">📱</span>
+                                </div>
+                            </button>
+                            
+                            <button onclick="shareRandomTestimony()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="font-bold mb-1">✨ Témoignage</div>
+                                        <div class="text-sm opacity-90">Partager un témoignage</div>
+                                    </div>
+                                    <span class="text-2xl">📱</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Games Content -->
+            <div id="gamesContent" class="hidden flex-1 p-4 overflow-y-auto">
+                <div class="text-center mb-6">
+                    <h3 class="text-lg font-semibold mb-2">Jeux Bibliques</h3>
+                    <p class="text-gray-600 text-sm">Découvre la Bible en t'amusant !</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Quiz Biblique -->
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-bold">📖 Quiz Biblique Infini</h4>
+                                <p class="text-sm opacity-90">Questions illimitées avec chrono</p>
+                            </div>
+                            <div class="text-3xl pulse-effect">🧠</div>
+                        </div>
+                        <button onclick="startBibleQuiz()" class="w-full bg-white bg-opacity-20 text-white font-semibold py-3 rounded-xl hover:bg-opacity-30 transition-all interactive-btn">
+                            🎮 Jouer maintenant
+                        </button>
+                    </div>
+                    
+                    <!-- Trouve le Verset -->
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-bold">🔍 Trouve le Verset Infini</h4>
+                                <p class="text-sm opacity-90">Versets aléatoires sans fin</p>
+                            </div>
+                            <div class="text-3xl pulse-effect">📜</div>
+                        </div>
+                        <button onclick="startVerseGame()" class="w-full bg-white bg-opacity-20 text-white font-semibold py-3 rounded-xl hover:bg-opacity-30 transition-all interactive-btn">
+                            🎮 Jouer maintenant
+                        </button>
+                    </div>
+                    
+                    <!-- Mémoire Biblique -->
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-bold">🧩 Mémoire Biblique Infinie</h4>
+                                <p class="text-sm opacity-90">Parties consécutives automatiques</p>
+                            </div>
+                            <div class="text-3xl pulse-effect">🎯</div>
+                        </div>
+                        <button onclick="startMemoryGame()" class="w-full bg-white bg-opacity-20 text-white font-semibold py-3 rounded-xl hover:bg-opacity-30 transition-all interactive-btn">
+                            🎮 Jouer maintenant
+                        </button>
+                    </div>
+                    
+                    <!-- Devine le Personnage -->
+                    <div class="bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-bold">👤 Devine le Personnage Infini</h4>
+                                <p class="text-sm opacity-90">Personnages aléatoires avec indices</p>
+                            </div>
+                            <div class="text-3xl pulse-effect">🎭</div>
+                        </div>
+                        <button onclick="startCharacterGame()" class="w-full bg-white bg-opacity-20 text-white font-semibold py-3 rounded-xl hover:bg-opacity-30 transition-all interactive-btn">
+                            🎮 Jouer maintenant
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inbox Content -->
+            <div id="inboxContent" class="hidden flex-1 flex flex-col">
+                <div class="flex items-center justify-between p-4 border-b bg-white">
+                    <h3 class="text-lg font-semibold">Messages reçus</h3>
+                    <button onclick="refreshInbox()" class="bg-purple-600 text-white px-3 py-2 rounded-full text-sm font-medium interactive-btn">
+                        🔄 Actualiser
+                    </button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messagesList">
+                    <!-- Messages exemple -->
+                    <div class="bg-white rounded-2xl p-4 border border-gray-200">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-sm text-gray-500">Anonyme • il y a 2h</div>
+                            <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Question</div>
+                        </div>
+                        <p class="text-gray-800 mb-3">"Quel est ton verset préféré et pourquoi ?"</p>
+                        <button onclick="openResponsePage('Anonyme', 'Quel est ton verset préféré et pourquoi ?', 'question')" class="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium interactive-btn">
+                            💬 Répondre
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-4 border border-gray-200">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-sm text-gray-500">Anonyme • il y a 5h</div>
+                            <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Prière</div>
+                        </div>
+                        <p class="text-gray-800 mb-3">"Peux-tu prier pour ma famille ? Nous traversons une période difficile."</p>
+                        <button onclick="openResponsePage('Anonyme', 'Peux-tu prier pour ma famille ? Nous traversons une période difficile.', 'prayer')" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium interactive-btn">
+                            🙏 Répondre
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-4 border border-gray-200">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-sm text-gray-500">Anonyme • hier</div>
+                            <div class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">Témoignage</div>
+                        </div>
+                        <p class="text-gray-800 mb-3">"Merci pour tes messages inspirants ! Ils m'aident beaucoup. 🙏"</p>
+                        <button onclick="openResponsePage('Anonyme', 'Merci pour tes messages inspirants ! Ils m\'aident beaucoup. 🙏', 'testimony')" class="bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-medium interactive-btn">
+                            ❤️ Répondre
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 'welcomePage';
+        let selectedPlatform = '';
+        let username = '';
+        let profileEmoji = '🙏';
+        let appConfig = {"scriptUrl":"https://script.google.com/macros/s/AKfycbznqEPPRCC79rujx_rKALbzHftiJIZ2WP0-F-jPZ-GDNh6zT0sWCwhyyvNOVdmuR4oiMA/exec","sheetId":"1hXfUYuSlyTHkXyZkEiTMb5h1wvK89iWgROlu5YQsMBk","configured":true};
+
+        // ===== NAVIGATION =====
+        function goToPage(pageId) {
+            document.querySelectorAll('.app-container > div').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            currentPage = pageId;
+            
+            if (pageId === 'mainPage') {
+                updateUserProfile();
+                updateUniversalLink();
+            }
+        }
+
+        function selectPlatform(platform) {
+            selectedPlatform = platform;
+            document.querySelectorAll('#platformPage button').forEach(btn => {
+                btn.classList.remove('border-purple-500', 'border-green-500', 'border-yellow-500');
+                btn.classList.add('border-gray-200');
+            });
+            event.target.closest('button').classList.remove('border-gray-200');
+            if (platform === 'instagram') event.target.closest('button').classList.add('border-purple-500');
+            if (platform === 'whatsapp') event.target.closest('button').classList.add('border-green-500');
+            if (platform === 'snapchat') event.target.closest('button').classList.add('border-yellow-500');
+        }
+
+        function setProfileEmoji(emoji) {
+            profileEmoji = emoji;
+            document.getElementById('profileEmoji').textContent = emoji;
+        }
+
+        function updateUserProfile() {
+            const usernameInput = document.getElementById('usernameInput');
+            if (usernameInput && usernameInput.value) {
+                username = usernameInput.value.replace('@', '');
+            }
+            if (!username) username = 'PrayerWarrior';
+            
+            document.getElementById('mainUsername').textContent = '@' + username;
+            document.getElementById('mainProfileEmoji').textContent = profileEmoji;
+        }
+
+        function updateUniversalLink() {
+            const link = `${appConfig.baseUrl}/u/${username}`;
+            document.getElementById('universalLink').textContent = link;
+        }
+
+        // ===== ONGLETS =====
+        function showTab(tabName) {
+            // Cacher tous les contenus
+            document.getElementById('shareContent').classList.add('hidden');
+            document.getElementById('gamesContent').classList.add('hidden');
+            document.getElementById('inboxContent').classList.add('hidden');
+            
+            // Réinitialiser les styles des onglets
+            document.getElementById('shareTab').classList.remove('border-purple-600', 'text-purple-600');
+            document.getElementById('shareTab').classList.add('text-gray-500');
+            document.getElementById('gamesTab').classList.remove('border-purple-600', 'text-purple-600');
+            document.getElementById('gamesTab').classList.add('text-gray-500');
+            document.getElementById('inboxTab').classList.remove('border-purple-600', 'text-purple-600');
+            document.getElementById('inboxTab').classList.add('text-gray-500');
+            
+            // Afficher le contenu sélectionné
+            if (tabName === 'share') {
+                document.getElementById('shareContent').classList.remove('hidden');
+                document.getElementById('shareTab').classList.add('border-purple-600', 'text-purple-600');
+                document.getElementById('shareTab').classList.remove('text-gray-500');
+            } else if (tabName === 'games') {
+                document.getElementById('gamesContent').classList.remove('hidden');
+                document.getElementById('gamesTab').classList.add('border-purple-600', 'text-purple-600');
+                document.getElementById('gamesTab').classList.remove('text-gray-500');
+            } else if (tabName === 'inbox') {
+                document.getElementById('inboxContent').classList.remove('hidden');
+                document.getElementById('inboxTab').classList.add('border-purple-600', 'text-purple-600');
+                document.getElementById('inboxTab').classList.remove('text-gray-500');
+            }
+        }
+
+        // ===== LIEN UNIVERSEL =====
+        function copyUniversalLink() {
+            const link = document.getElementById('universalLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                showNotification('📋 Lien copié !');
+            }).catch(() => {
+                showNotification('❌ Erreur lors de la copie');
+            });
+        }
+
+        function shareUniversalLink() {
+            const link = document.getElementById('universalLink').textContent;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mon PrayLink',
+                    text: 'Envoie-moi un message anonyme sur PrayLink !',
+                    url: link
+                });
+            } else {
+                copyUniversalLink();
+                showNotification('📱 Lien copié ! Partage-le manuellement.');
+            }
+        }
+
+        function previewContext(context) {
+            const contextNames = {
+                question: 'Question',
+                verse: 'Verset',
+                prayer: 'Prière',
+                testimony: 'Témoignage'
+            };
+            
+            const messages = {
+                question: 'Quel est ton verset préféré ?',
+                verse: 'Partage un verset qui t\'inspire',
+                prayer: 'Pour quoi aimerais-tu qu\'on prie ?',
+                testimony: 'Partage un témoignage de foi'
+            };
+            
+            openResponsePage('Toi', messages[context], context);
+        }
+
+        // ===== PAGE DE RÉPONSE =====
+        function openResponsePage(sender, message, context) {
+            document.getElementById('responseRecipient').textContent = '@' + username;
+            document.getElementById('originalMessage').textContent = '"' + message + '"';
+            document.getElementById('responseContext').textContent = context.charAt(0).toUpperCase() + context.slice(1);
+            
+            // Cacher l'app principale et afficher la page de réponse
+            document.querySelector('.app-container').style.display = 'none';
+            document.getElementById('responsePage').classList.remove('hidden');
+        }
+
+        function sendAnonymousResponse() {
+            const responseText = document.getElementById('responseText').value;
+            
+            if (!responseText.trim()) {
+                showNotification('❌ Écris une réponse avant d\'envoyer');
+                return;
+            }
+            
+            // Envoyer à Google Sheets
+            const messageData = {
+                action: 'sendMessage',
+                recipient: document.getElementById('responseRecipient').textContent.replace('@', ''),
+                message: responseText,
+                context: document.getElementById('responseContext').textContent,
+                timestamp: new Date().toISOString(),
+                sender: 'Anonyme'
+            };
+            
+            sendToGoogleSheets(messageData);
+            
+            showNotification('✅ Réponse envoyée anonymement !');
+            document.getElementById('responseText').value = '';
+            
+            setTimeout(() => {
+                document.getElementById('responsePage').classList.add('hidden');
+                document.querySelector('.app-container').style.display = 'block';
+            }, 2000);
+        }
+
+        function addEmoji() {
+            const emojis = ['😊', '🙏', '❤️', '✨', '🌟', '💫', '🕊️', '👼'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            const textarea = document.getElementById('responseText');
+            textarea.value += ' ' + randomEmoji;
+            textarea.focus();
+        }
+
+        function createMyPrayLink() {
+            document.getElementById('responsePage').classList.add('hidden');
+            document.querySelector('.app-container').style.display = 'block';
+            goToPage('welcomePage');
+            showNotification('🙏 Bienvenue sur PrayLink !');
+        }
+
+        // ===== JEUX =====
+
+        // Quiz Biblique - Base de données massive et infinie
+        const quizQuestions = [
+            { question: "Qui a construit l'arche ?", options: ["Moïse", "Noé", "Abraham", "David"], correct: 1 },
+            { question: "Combien d'apôtres Jésus avait-il ?", options: ["10", "11", "12", "13"], correct: 2 },
+            { question: "Qui a écrit le livre des Psaumes ?", options: ["Salomon", "David", "Moïse", "Paul"], correct: 1 },
+            { question: "Dans quelle ville Jésus est-il né ?", options: ["Nazareth", "Jérusalem", "Bethléem", "Capharnaüm"], correct: 2 },
+            { question: "Combien de jours Jésus a-t-il jeûné ?", options: ["30", "40", "50", "60"], correct: 1 },
+            { question: "Qui a trahi Jésus ?", options: ["Pierre", "Jean", "Judas", "Thomas"], correct: 2 },
+            { question: "Combien de livres dans la Bible ?", options: ["64", "65", "66", "67"], correct: 2 },
+            { question: "Qui a été avalé par un poisson ?", options: ["Jonas", "Job", "Josué", "Jérémie"], correct: 0 },
+            { question: "Première femme créée par Dieu ?", options: ["Marie", "Ruth", "Ève", "Sarah"], correct: 2 },
+            { question: "Qui a reçu les 10 commandements ?", options: ["Abraham", "Moïse", "David", "Salomon"], correct: 1 },
+            { question: "Combien de plaies en Égypte ?", options: ["8", "9", "10", "12"], correct: 2 },
+            { question: "Qui a vaincu Goliath ?", options: ["Saül", "David", "Jonathan", "Samuel"], correct: 1 },
+            { question: "Premier roi d'Israël ?", options: ["David", "Salomon", "Saül", "Samuel"], correct: 2 },
+            { question: "Qui a interprété les rêves de Pharaon ?", options: ["Moïse", "Joseph", "Aaron", "Daniel"], correct: 1 },
+            { question: "Combien de disciples Jésus a-t-il choisis ?", options: ["10", "11", "12", "70"], correct: 2 },
+            { question: "Qui a marché sur l'eau ?", options: ["Pierre", "Jean", "Jésus", "Paul"], correct: 2 },
+            { question: "Premier miracle de Jésus ?", options: ["Guérison", "Eau en vin", "Multiplication", "Résurrection"], correct: 1 },
+            { question: "Qui a nié Jésus 3 fois ?", options: ["Jean", "Pierre", "Thomas", "Judas"], correct: 1 },
+            { question: "Montagne où Moïse est mort ?", options: ["Sinaï", "Horeb", "Nébo", "Carmel"], correct: 2 },
+            { question: "Qui a construit le temple ?", options: ["David", "Salomon", "Esdras", "Néhémie"], correct: 1 },
+            { question: "Combien d'années Mathusalem a-t-il vécu ?", options: ["900", "950", "969", "1000"], correct: 2 },
+            { question: "Qui a été le premier martyr chrétien ?", options: ["Pierre", "Paul", "Étienne", "Jacques"], correct: 2 },
+            { question: "Dans quel livre trouve-t-on l'histoire de Ruth ?", options: ["Juges", "Ruth", "1 Samuel", "Esther"], correct: 1 },
+            { question: "Combien de fois par jour Daniel priait-il ?", options: ["1", "2", "3", "5"], correct: 2 },
+            { question: "Qui a écrit le livre de l'Apocalypse ?", options: ["Paul", "Pierre", "Jean", "Luc"], correct: 2 },
+            { question: "Combien de personnes étaient dans l'arche ?", options: ["6", "7", "8", "10"], correct: 2 },
+            { question: "Qui était la femme d'Abraham ?", options: ["Rebecca", "Rachel", "Sarah", "Léa"], correct: 2 },
+            { question: "Combien de fils Jacob avait-il ?", options: ["10", "11", "12", "13"], correct: 2 },
+            { question: "Qui a succédé à Moïse ?", options: ["Aaron", "Josué", "Caleb", "Samuel"], correct: 1 },
+            { question: "Dans quelle mer les Israélites ont-ils traversé ?", options: ["Méditerranée", "Rouge", "Morte", "Galilée"], correct: 1 },
+            { question: "Qui était le père de Jean-Baptiste ?", options: ["Joseph", "Zacharie", "Siméon", "Anne"], correct: 1 },
+            { question: "Combien de jours Lazare était-il mort ?", options: ["2", "3", "4", "7"], correct: 2 },
+            { question: "Qui a vendu son droit d'aînesse ?", options: ["Jacob", "Ésaü", "Isaac", "Abraham"], correct: 1 },
+            { question: "Combien de pains Jésus a-t-il multipliés ?", options: ["3", "5", "7", "12"], correct: 1 },
+            { question: "Qui était le roi le plus sage ?", options: ["David", "Salomon", "Ézéchias", "Josias"], correct: 1 },
+            { question: "Dans quelle ville Paul est-il né ?", options: ["Jérusalem", "Tarse", "Antioche", "Damas"], correct: 1 },
+            { question: "Combien de commandements Dieu a-t-il donnés ?", options: ["8", "10", "12", "15"], correct: 1 },
+            { question: "Qui a baptisé Jésus ?", options: ["Pierre", "Jean-Baptiste", "André", "Philippe"], correct: 1 },
+            { question: "Combien de fois faut-il pardonner ?", options: ["7 fois", "70 fois", "77 fois", "À l'infini"], correct: 3 },
+            { question: "Qui était la mère de Samuel ?", options: ["Anne", "Ruth", "Débora", "Esther"], correct: 0 },
+            { question: "Dans quel jardin Adam et Ève vivaient-ils ?", options: ["Gethsémané", "Éden", "Oliviers", "Cèdres"], correct: 1 },
+            { question: "Combien de témoins faut-il selon la loi ?", options: ["1", "2", "3", "7"], correct: 1 },
+            { question: "Qui a écrit la plupart des Proverbes ?", options: ["David", "Salomon", "Ésaïe", "Jérémie"], correct: 1 },
+            { question: "Combien d'animaux de chaque espèce dans l'arche ?", options: ["1 paire", "2 paires", "7 paires", "Variable"], correct: 3 },
+            { question: "Qui était le frère de Moïse ?", options: ["Aaron", "Josué", "Caleb", "Hur"], correct: 0 },
+            { question: "Dans quelle ville Jésus a-t-il grandi ?", options: ["Bethléem", "Nazareth", "Capharnaüm", "Jérusalem"], correct: 1 },
+            { question: "Combien de livres dans l'Ancien Testament ?", options: ["27", "39", "46", "66"], correct: 1 },
+            { question: "Qui a construit la tour de Babel ?", options: ["Nemrod", "Les hommes", "Noé", "Abraham"], correct: 1 },
+            { question: "Combien de plaies sur Job ?", options: ["7", "10", "12", "Nombreuses"], correct: 3 },
+            { question: "Qui était le plus petit des apôtres ?", options: ["Jean", "Matthieu", "Paul", "Pierre"], correct: 2 }
+        ];
+
+        let currentQuiz = 0;
+        let quizScore = 0;
+        let quizStartTime = 0;
+        let totalQuizTime = 0;
+
+        function startBibleQuiz() {
+            currentQuiz = 0;
+            quizScore = 0;
+            quizStartTime = Date.now();
+            totalQuizTime = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            // Sélectionner une question aléatoire pour un jeu infini
+            const randomIndex = Math.floor(Math.random() * quizQuestions.length);
+            const question = quizQuestions[randomIndex];
+            
+            // Calculer le temps écoulé
+            const currentTime = Date.now();
+            const sessionTime = Math.floor((currentTime - quizStartTime) / 1000);
+            const minutes = Math.floor(sessionTime / 60);
+            const seconds = sessionTime % 60;
+            
+            createGameModal('Quiz Biblique Infini', `
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">🧠</div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            Question ${currentQuiz + 1}
+                        </div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            ⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold mb-4">${question.question}</h3>
+                </div>
+                
+                <div class="space-y-3 mb-6">
+                    ${question.options.map((option, index) => `
+                        <button onclick="selectQuizAnswer(${index}, ${question.correct})" class="w-full p-3 text-left border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all interactive-btn">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join('')}
+                </div>
+                
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <div>Score: ${quizScore}/${currentQuiz}</div>
+                    <div>Précision: ${currentQuiz > 0 ? Math.round((quizScore/currentQuiz)*100) : 0}%</div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t">
+                    <button onclick="closeGameModal()" class="w-full bg-gray-100 text-gray-700 py-2 rounded-xl text-sm interactive-btn">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            `);
+        }
+
+        function selectQuizAnswer(selectedIndex, correctIndex) {
+            const isCorrect = selectedIndex === correctIndex;
+            
+            if (isCorrect) {
+                quizScore++;
+                showNotification('✅ Bonne réponse ! +1 point');
+            } else {
+                const correctOption = document.querySelector(`button[onclick*="${correctIndex}"]`).textContent;
+                showNotification(`❌ Mauvaise réponse. C'était: ${correctOption}`);
+            }
+            
+            currentQuiz++;
+            setTimeout(() => {
+                showQuizQuestion(); // Continue infiniment
+            }, 1500);
+        }
+
+        // Quiz infini - plus de résultats finaux
+
+        // Base de données de contenu étendue
+        const verseGameData = [
+            { incomplete: "Car Dieu a tant aimé le monde qu'il a donné son Fils _____, afin que quiconque croit en lui ne périsse point.", missing: "unique", ref: "Jean 3:16" },
+            { incomplete: "Je puis tout par celui qui me _____.", missing: "fortifie", ref: "Philippiens 4:13" },
+            { incomplete: "Venez à moi, vous tous qui êtes _____ et chargés, et je vous donnerai du repos.", missing: "fatigués", ref: "Matthieu 11:28" },
+            { incomplete: "L'Éternel est mon _____, je ne manquerai de rien.", missing: "berger", ref: "Psaume 23:1" },
+            { incomplete: "Cherchez premièrement le _____ et la justice de Dieu.", missing: "royaume", ref: "Matthieu 6:33" },
+            { incomplete: "Ne crains rien, car je suis avec _____.", missing: "toi", ref: "Ésaïe 41:10" },
+            { incomplete: "Car mes _____ ne sont pas vos pensées.", missing: "pensées", ref: "Ésaïe 55:8" },
+            { incomplete: "Remets ton sort à l'_____, Et il te soutiendra.", missing: "Éternel", ref: "Psaume 55:22" },
+            { incomplete: "Tout ce que vous demanderez avec _____, vous le recevrez.", missing: "foi", ref: "Matthieu 21:22" },
+            { incomplete: "L'_____ de Dieu, qui surpasse toute intelligence.", missing: "amour", ref: "Éphésiens 3:19" },
+            { incomplete: "Celui qui demeure sous l'abri du Très-Haut repose à l'_____ du Tout-Puissant.", missing: "ombre", ref: "Psaume 91:1" },
+            { incomplete: "Heureux ceux qui ont _____ sans avoir vu.", missing: "cru", ref: "Jean 20:29" },
+            { incomplete: "La _____ vient de ce qu'on entend, et ce qu'on entend vient de la parole de Christ.", missing: "foi", ref: "Romains 10:17" },
+            { incomplete: "Soyez dans la _____, et ne péchez point.", missing: "colère", ref: "Éphésiens 4:26" },
+            { incomplete: "Car là où est ton _____, là aussi sera ton cœur.", missing: "trésor", ref: "Matthieu 6:21" },
+            { incomplete: "Celui qui cache ses _____ ne prospère point.", missing: "transgressions", ref: "Proverbes 28:13" },
+            { incomplete: "La _____ de l'Éternel est le commencement de la sagesse.", missing: "crainte", ref: "Proverbes 9:10" },
+            { incomplete: "Approchez-vous de Dieu, et il s'approchera de _____.", missing: "vous", ref: "Jacques 4:8" },
+            { incomplete: "Car c'est par la _____ que vous êtes sauvés.", missing: "grâce", ref: "Éphésiens 2:8" },
+            { incomplete: "Celui qui croit au Fils a la vie _____.", missing: "éternelle", ref: "Jean 3:36" },
+            { incomplete: "Il me fait reposer dans de verts _____.", missing: "pâturages", ref: "Psaume 23:2" },
+            { incomplete: "Même quand je marche dans la vallée de l'ombre de la _____, je ne crains aucun mal.", missing: "mort", ref: "Psaume 23:4" },
+            { incomplete: "Ta _____ et ton bâton me rassurent.", missing: "houlette", ref: "Psaume 23:4" },
+            { incomplete: "Tu dresses devant moi une _____ en face de mes adversaires.", missing: "table", ref: "Psaume 23:5" },
+            { incomplete: "Oui, le bonheur et la _____ m'accompagneront tous les jours de ma vie.", missing: "grâce", ref: "Psaume 23:6" },
+            { incomplete: "Au commencement était la _____, et la Parole était avec Dieu.", missing: "Parole", ref: "Jean 1:1" },
+            { incomplete: "Et la Parole a été faite _____, et elle a habité parmi nous.", missing: "chair", ref: "Jean 1:14" },
+            { incomplete: "Il était la vraie _____, qui, en venant dans le monde, éclaire tout homme.", missing: "lumière", ref: "Jean 1:9" },
+            { incomplete: "Mais à tous ceux qui l'ont reçue, elle a donné le pouvoir de devenir enfants de _____.", missing: "Dieu", ref: "Jean 1:12" },
+            { incomplete: "Car la _____ a été donnée par Moïse, la grâce et la vérité sont venues par Jésus-Christ.", missing: "loi", ref: "Jean 1:17" },
+            { incomplete: "Jésus lui dit: Je suis le _____, la vérité, et la vie.", missing: "chemin", ref: "Jean 14:6" },
+            { incomplete: "Nul ne vient au _____ que par moi.", missing: "Père", ref: "Jean 14:6" },
+            { incomplete: "Dans la maison de mon Père, il y a plusieurs _____.", missing: "demeures", ref: "Jean 14:2" },
+            { incomplete: "Je vous laisse la _____, je vous donne ma paix.", missing: "paix", ref: "Jean 14:27" },
+            { incomplete: "Je suis le cep, vous êtes les _____.", missing: "sarments", ref: "Jean 15:5" },
+            { incomplete: "Il n'y a pas de plus grand _____ que de donner sa vie pour ses amis.", missing: "amour", ref: "Jean 15:13" },
+            { incomplete: "Demandez, et l'on vous _____; cherchez, et vous trouverez.", missing: "donnera", ref: "Matthieu 7:7" },
+            { incomplete: "Frappez, et l'on vous _____.", missing: "ouvrira", ref: "Matthieu 7:7" },
+            { incomplete: "Car quiconque demande reçoit, celui qui cherche _____, et l'on ouvre à celui qui frappe.", missing: "trouve", ref: "Matthieu 7:8" },
+            { incomplete: "Ne vous inquiétez donc point du _____, car le lendemain aura soin de lui-même.", missing: "lendemain", ref: "Matthieu 6:34" },
+            { incomplete: "À chaque jour suffit sa _____.", missing: "peine", ref: "Matthieu 6:34" },
+            { incomplete: "Regardez les oiseaux du ciel: ils ne sèment ni ne moissonnent, et votre Père céleste les _____.", missing: "nourrit", ref: "Matthieu 6:26" },
+            { incomplete: "Ne valez-vous pas beaucoup plus qu'_____?", missing: "eux", ref: "Matthieu 6:26" },
+            { incomplete: "Et pourquoi vous inquiéter au sujet du vêtement? Considérez comment croissent les _____ des champs.", missing: "lis", ref: "Matthieu 6:28" },
+            { incomplete: "Ils ne travaillent ni ne filent; cependant je vous dis que _____ même, dans toute sa gloire, n'a pas été vêtu comme l'un d'eux.", missing: "Salomon", ref: "Matthieu 6:29" },
+            { incomplete: "Heureux les pauvres en _____, car le royaume des cieux est à eux!", missing: "esprit", ref: "Matthieu 5:3" },
+            { incomplete: "Heureux ceux qui pleurent, car ils seront _____!", missing: "consolés", ref: "Matthieu 5:4" },
+            { incomplete: "Heureux les débonnaires, car ils hériteront la _____!", missing: "terre", ref: "Matthieu 5:5" },
+            { incomplete: "Heureux ceux qui ont faim et soif de la _____, car ils seront rassasiés!", missing: "justice", ref: "Matthieu 5:6" },
+            { incomplete: "Heureux les miséricordieux, car ils obtiendront _____!", missing: "miséricorde", ref: "Matthieu 5:7" },
+            { incomplete: "Heureux ceux qui ont le cœur _____, car ils verront Dieu!", missing: "pur", ref: "Matthieu 5:8" },
+            { incomplete: "Vous êtes le _____ de la terre.", missing: "sel", ref: "Matthieu 5:13" },
+            { incomplete: "Vous êtes la _____ du monde.", missing: "lumière", ref: "Matthieu 5:14" },
+            { incomplete: "Que votre lumière luise ainsi devant les hommes, afin qu'ils voient vos bonnes _____ et qu'ils glorifient votre Père qui est dans les cieux.", missing: "œuvres", ref: "Matthieu 5:16" },
+            { incomplete: "Car mes _____ ne sont pas vos voies, dit l'Éternel.", missing: "voies", ref: "Ésaïe 55:8" },
+            { incomplete: "Autant les cieux sont élevés au-dessus de la terre, autant mes voies sont élevées au-dessus de vos _____.", missing: "voies", ref: "Ésaïe 55:9" },
+            { incomplete: "Ainsi en est-il de ma parole qui sort de ma bouche: Elle ne retourne point à moi sans _____.", missing: "effet", ref: "Ésaïe 55:11" },
+            { incomplete: "Mais elle accomplit ce que je veux, Et elle réussit dans ce pour quoi je l'ai _____.", missing: "envoyée", ref: "Ésaïe 55:11" },
+            { incomplete: "L'Éternel est près de ceux qui ont le cœur _____.", missing: "brisé", ref: "Psaume 34:18" },
+            { incomplete: "Et il sauve ceux qui ont l'esprit dans l'_____.", missing: "abattement", ref: "Psaume 34:18" },
+            { incomplete: "Goûtez et voyez combien l'Éternel est _____!", missing: "bon", ref: "Psaume 34:8" },
+            { incomplete: "Heureux l'homme qui cherche en lui son _____!", missing: "refuge", ref: "Psaume 34:8" }
+        ];
+
+        const bibleVerses = [
+            { text: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle.", ref: "Jean 3:16" },
+            { text: "Je puis tout par celui qui me fortifie.", ref: "Philippiens 4:13" },
+            { text: "L'Éternel est mon berger, je ne manquerai de rien.", ref: "Psaume 23:1" },
+            { text: "Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos.", ref: "Matthieu 11:28" },
+            { text: "Cherchez premièrement le royaume et la justice de Dieu, et toutes ces choses vous seront données par-dessus.", ref: "Matthieu 6:33" },
+            { text: "Ne crains rien, car je suis avec toi; Ne promène pas des regards inquiets, car je suis ton Dieu.", ref: "Ésaïe 41:10" },
+            { text: "Car mes pensées ne sont pas vos pensées, Et vos voies ne sont pas mes voies, Dit l'Éternel.", ref: "Ésaïe 55:8" },
+            { text: "Remets ton sort à l'Éternel, Et il te soutiendra, Il ne laissera jamais chanceler le juste.", ref: "Psaume 55:22" }
+        ];
+
+        const prayers = [
+            { title: "Prière du matin", text: "Seigneur, merci pour cette nouvelle journée. Guide mes pas et que ta volonté soit faite. Amen." },
+            { title: "Prière de protection", text: "Père céleste, protège ma famille et mes proches. Couvre-nous de ton amour et de ta paix. Amen." },
+            { title: "Prière de gratitude", text: "Merci Seigneur pour toutes tes bénédictions. Tu es fidèle et bon en tout temps. Amen." },
+            { title: "Prière pour la sagesse", text: "Dieu tout-puissant, accorde-moi la sagesse pour prendre les bonnes décisions. Éclaire mon chemin. Amen." },
+            { title: "Prière de pardon", text: "Seigneur, pardonne-moi mes fautes. Aide-moi à pardonner à ceux qui m'ont blessé. Amen." },
+            { title: "Prière du soir", text: "Père, merci pour cette journée. Pardonne mes erreurs et accorde-moi un repos paisible. Amen." },
+            { title: "Prière pour la paix", text: "Prince de la paix, apaise mon cœur troublé. Que ta paix qui surpasse toute intelligence garde mon esprit. Amen." },
+            { title: "Prière pour la force", text: "Dieu tout-puissant, donne-moi la force de surmonter les épreuves. Tu es ma force et mon bouclier. Amen." },
+            { title: "Prière pour la guérison", text: "Jésus, grand médecin, touche et guéris ceux qui souffrent. Que ta puissance de guérison se manifeste. Amen." },
+            { title: "Prière pour la famille", text: "Seigneur, bénis ma famille. Unis-nous dans l'amour et protège chacun de nous. Amen." },
+            { title: "Prière pour le travail", text: "Père, bénis le travail de mes mains. Que tout ce que je fais soit pour ta gloire. Amen." },
+            { title: "Prière pour les finances", text: "Dieu pourvoyeur, tu connais mes besoins. Aide-moi à être un bon gestionnaire de tes bénédictions. Amen." },
+            { title: "Prière pour les malades", text: "Seigneur, touche ceux qui sont malades. Apporte la guérison et le réconfort à ceux qui souffrent. Amen." },
+            { title: "Prière pour les dirigeants", text: "Père, guide nos dirigeants. Donne-leur la sagesse pour prendre de bonnes décisions pour notre nation. Amen." },
+            { title: "Prière pour l'Église", text: "Jésus, bénis ton Église. Que nous soyons unis dans l'amour et fidèles à ta Parole. Amen." },
+            { title: "Prière pour les missions", text: "Seigneur, bénis les missionnaires dans le monde. Ouvre les cœurs à l'Évangile. Amen." },
+            { title: "Prière pour les jeunes", text: "Père, guide nos jeunes. Protège-les des tentations et aide-les à marcher dans tes voies. Amen." },
+            { title: "Prière pour les personnes âgées", text: "Seigneur, bénis nos aînés. Donne-leur la santé, la joie et le sentiment d'être utiles. Amen." },
+            { title: "Prière pour la patience", text: "Dieu de patience, aide-moi à attendre tes temps parfaits. Enseigne-moi la patience dans les épreuves. Amen." },
+            { title: "Prière pour l'humilité", text: "Jésus, modèle d'humilité, aide-moi à marcher humblement devant toi et devant les autres. Amen." },
+            { title: "Prière pour la joie", text: "Dieu de joie, remplis mon cœur de ta joie parfaite qui ne dépend pas des circonstances. Amen." },
+            { title: "Prière pour l'espérance", text: "Dieu d'espérance, quand tout semble sombre, rappelle-moi que tu as un plan parfait pour ma vie. Amen." },
+            { title: "Prière pour la foi", text: "Seigneur, augmente ma foi. Aide-moi à te faire confiance même quand je ne comprends pas. Amen." },
+            { title: "Prière pour l'amour", text: "Dieu d'amour, remplis mon cœur de ton amour pour que je puisse aimer comme tu aimes. Amen." },
+            { title: "Prière pour la provision", text: "Jéhovah Jiré, tu es mon pourvoyeur. Je te fais confiance pour tous mes besoins. Amen." },
+            { title: "Prière pour la direction", text: "Saint-Esprit, guide-moi dans toutes mes décisions. Montre-moi le chemin à suivre. Amen." },
+            { title: "Prière pour la réconciliation", text: "Père de miséricorde, aide-moi à me réconcilier avec ceux qui m'ont blessé. Amen." },
+            { title: "Prière pour la pureté", text: "Dieu saint, purifie mon cœur et mes pensées. Aide-moi à vivre dans la sainteté. Amen." },
+            { title: "Prière pour la persévérance", text: "Seigneur, donne-moi la force de persévérer dans les difficultés. Tu es ma force. Amen." },
+            { title: "Prière pour la compassion", text: "Jésus compatissant, donne-moi un cœur de compassion pour ceux qui souffrent autour de moi. Amen." },
+            { title: "Prière pour la liberté", text: "Dieu libérateur, brise les chaînes qui m'empêchent de te servir pleinement. Amen." },
+            { title: "Prière pour la croissance spirituelle", text: "Père, aide-moi à grandir dans la connaissance de ta Parole et dans la ressemblance à Christ. Amen." },
+            { title: "Prière pour les ennemis", text: "Seigneur, bénis ceux qui me font du mal. Change leur cœur et le mien pour ton amour. Amen." },
+            { title: "Prière pour la créativité", text: "Dieu créateur, inspire-moi dans mon travail créatif. Que tout soit pour ta gloire. Amen." },
+            { title: "Prière pour l'unité", text: "Jésus, que ton peuple soit un comme toi et le Père êtes un. Brise les divisions. Amen." },
+            { title: "Prière pour la terre", text: "Créateur, aide-nous à être de bons intendants de la création que tu nous as confiée. Amen." },
+            { title: "Prière pour les orphelins", text: "Père des orphelins, protège et pourvois aux besoins des enfants sans parents. Amen." },
+            { title: "Prière pour les veuves", text: "Dieu consolateur, réconforte les veuves et pourvois à leurs besoins. Amen." },
+            { title: "Prière pour la justice", text: "Dieu juste, que ta justice règne sur la terre. Défends les opprimés et les faibles. Amen." },
+            { title: "Prière pour la révélation", text: "Saint-Esprit, révèle-moi les mystères de ta Parole. Ouvre mes yeux spirituels. Amen." }
+        ];
+
+        const testimonies = [
+            { title: "Guérison miraculeuse", text: "Dieu m'a guéri d'une maladie que les médecins ne pouvaient pas soigner. Sa grâce est infinie ! 🙏" },
+            { title: "Provision divine", text: "Quand j'étais dans le besoin, Dieu a pourvu de manière inattendue. Il est fidèle ! ✨" },
+            { title: "Paix dans l'épreuve", text: "Malgré les difficultés, Dieu m'a donné une paix qui surpasse toute intelligence. 💫" },
+            { title: "Restauration familiale", text: "Dieu a restauré ma famille brisée. Rien n'est impossible avec Lui ! ❤️" }
+        ];
+
+        let currentVerseGame = 0;
+        let verseGameScore = 0;
+        let verseStartTime = 0;
+
+        function startVerseGame() {
+            currentVerseGame = 0;
+            verseGameScore = 0;
+            verseStartTime = Date.now();
+            showVerseGameQuestion();
+        }
+
+        function showVerseGameQuestion() {
+            // Sélectionner un verset aléatoire pour un jeu infini
+            const randomIndex = Math.floor(Math.random() * verseGameData.length);
+            const verse = verseGameData[randomIndex];
+            
+            // Calculer le temps écoulé
+            const currentTime = Date.now();
+            const sessionTime = Math.floor((currentTime - verseStartTime) / 1000);
+            const minutes = Math.floor(sessionTime / 60);
+            const seconds = sessionTime % 60;
+            
+            createGameModal('Trouve le Verset Infini', `
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">📜</div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                            Verset ${currentVerseGame + 1}
+                        </div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            ⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-xl mb-6">
+                    <p class="text-gray-800 italic">"${verse.incomplete}"</p>
+                    <p class="text-sm text-gray-500 mt-2">${verse.ref}</p>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2">Mot manquant :</label>
+                    <input type="text" id="verseAnswer" class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none" placeholder="Tapez le mot manquant..." data-correct="${verse.missing}">
+                </div>
+                
+                <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
+                    <div>Score: ${verseGameScore}/${currentVerseGame}</div>
+                    <div>Précision: ${currentVerseGame > 0 ? Math.round((verseGameScore/currentVerseGame)*100) : 0}%</div>
+                </div>
+                
+                <div class="space-y-3">
+                    <button onclick="checkVerseAnswer()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold interactive-btn">
+                        ✅ Vérifier
+                    </button>
+                    <button onclick="closeGameModal()" class="w-full bg-gray-100 text-gray-700 py-2 rounded-xl text-sm interactive-btn">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            `);
+            
+            setTimeout(() => {
+                const input = document.getElementById('verseAnswer');
+                if (input) {
+                    input.focus();
+                    // Permettre validation avec Entrée
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            checkVerseAnswer();
+                        }
+                    });
+                }
+            }, 100);
+        }
+
+        function checkVerseAnswer() {
+            const input = document.getElementById('verseAnswer');
+            const userAnswer = input.value.toLowerCase().trim();
+            const correctAnswer = input.dataset.correct.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                verseGameScore++;
+                showNotification('✅ Excellent ! Bonne réponse ! +1 point');
+            } else {
+                showNotification(`❌ La bonne réponse était: ${input.dataset.correct}`);
+            }
+            
+            currentVerseGame++;
+            input.value = '';
+            setTimeout(() => {
+                showVerseGameQuestion(); // Continue infiniment
+            }, 1500);
+        }
+
+        // Jeu de versets infini - plus de résultats finaux
+
+        // Jeu de Mémoire
+        const memoryCards = ['🙏', '✝️', '📖', '🕊️', '👼', '⭐', '💒', '🎺'];
+        let memoryGameCards = [];
+        let flippedCards = [];
+        let memoryScore = 0;
+        let memoryMoves = 0;
+
+        let memoryStartTime = 0;
+        let memoryGamesPlayed = 0;
+
+        function startMemoryGame() {
+            memoryGameCards = [...memoryCards, ...memoryCards].sort(() => Math.random() - 0.5);
+            flippedCards = [];
+            memoryScore = 0;
+            memoryMoves = 0;
+            if (memoryGamesPlayed === 0) {
+                memoryStartTime = Date.now();
+            }
+            showMemoryGame();
+        }
+
+        function showMemoryGame() {
+            // Calculer le temps écoulé
+            const currentTime = Date.now();
+            const sessionTime = Math.floor((currentTime - memoryStartTime) / 1000);
+            const minutes = Math.floor(sessionTime / 60);
+            const seconds = sessionTime % 60;
+            
+            const cardsHtml = memoryGameCards.map((card, index) => `
+                <div class="memory-card w-16 h-16 bg-blue-500 rounded-xl flex items-center justify-center text-2xl cursor-pointer hover:bg-blue-600 transition-all interactive-btn" 
+                     onclick="flipMemoryCard(${index})" 
+                     data-index="${index}" 
+                     data-card="${card}">
+                    <span class="card-back">🎯</span>
+                    <span class="card-front hidden">${card}</span>
+                </div>
+            `).join('');
+
+            createGameModal('Mémoire Biblique Infinie', `
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">🧩</div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            Partie ${memoryGamesPlayed + 1}
+                        </div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            ⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Paires: ${memoryScore}/8</span>
+                        <span>Coups: ${memoryMoves}</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-3 mb-6">
+                    ${cardsHtml}
+                </div>
+                
+                <button onclick="closeGameModal()" class="w-full bg-gray-100 text-gray-700 py-2 rounded-xl text-sm interactive-btn">
+                    ⏸️ Pause
+                </button>
+            `);
+        }
+
+        function flipMemoryCard(index) {
+            if (flippedCards.length >= 2) return;
+            
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (card.classList.contains('flipped')) return;
+            
+            card.classList.add('flipped');
+            card.querySelector('.card-back').classList.add('hidden');
+            card.querySelector('.card-front').classList.remove('hidden');
+            
+            flippedCards.push(index);
+            
+            if (flippedCards.length === 2) {
+                memoryMoves++;
+                setTimeout(checkMemoryMatch, 1000);
+            }
+        }
+
+        function checkMemoryMatch() {
+            const [first, second] = flippedCards;
+            const firstCard = memoryGameCards[first];
+            const secondCard = memoryGameCards[second];
+            
+            if (firstCard === secondCard) {
+                memoryScore++;
+                showNotification('✅ Paire trouvée !');
+                
+                if (memoryScore === 8) {
+                    setTimeout(showMemoryResults, 500);
+                }
+            } else {
+                const cards = document.querySelectorAll('.memory-card.flipped');
+                cards.forEach(card => {
+                    if (flippedCards.includes(parseInt(card.dataset.index))) {
+                        card.classList.remove('flipped');
+                        card.querySelector('.card-back').classList.remove('hidden');
+                        card.querySelector('.card-front').classList.add('hidden');
+                    }
+                });
+            }
+            
+            flippedCards = [];
+        }
+
+        function showMemoryResults() {
+            let performance = '';
+            if (memoryMoves <= 12) performance = 'Parfait ! 🏆';
+            else if (memoryMoves <= 20) performance = 'Excellent ! 👏';
+            else performance = 'Bien joué ! 📖';
+            
+            memoryGamesPlayed++;
+            showNotification(`${performance} Partie ${memoryGamesPlayed} terminée en ${memoryMoves} coups !`);
+            
+            // Démarrer automatiquement une nouvelle partie après 2 secondes
+            setTimeout(() => {
+                startMemoryGame();
+            }, 2000);
+        }
+
+        // Jeu Devine le Personnage - Base étendue
+        const characters = [
+            { name: "Moïse", clues: ["J'ai libéré le peuple d'Israël", "J'ai reçu les 10 commandements", "J'ai séparé la mer Rouge"] },
+            { name: "David", clues: ["J'étais berger", "J'ai vaincu Goliath", "J'ai écrit des psaumes"] },
+            { name: "Noé", clues: ["J'ai construit une arche", "J'ai sauvé les animaux", "J'ai survécu au déluge"] },
+            { name: "Abraham", clues: ["Dieu m'a promis une descendance", "J'ai quitté ma terre natale", "Je suis le père de la foi"] },
+            { name: "Joseph", clues: ["J'ai interprété les rêves", "Mes frères m'ont vendu", "J'ai gouverné l'Égypte"] },
+            { name: "Daniel", clues: ["J'ai survécu dans la fosse aux lions", "J'ai interprété des visions", "J'ai refusé la nourriture du roi"] },
+            { name: "Jonas", clues: ["J'ai fui loin de Dieu", "Un poisson m'a avalé", "J'ai prêché à Ninive"] },
+            { name: "Salomon", clues: ["J'ai demandé la sagesse", "J'ai construit le temple", "J'ai écrit des proverbes"] },
+            { name: "Pierre", clues: ["J'étais pêcheur", "J'ai marché sur l'eau", "J'ai renié Jésus trois fois"] },
+            { name: "Paul", clues: ["J'ai persécuté les chrétiens", "J'ai eu une vision sur le chemin", "J'ai écrit de nombreuses lettres"] },
+            { name: "Marie", clues: ["J'ai porté le Sauveur", "Un ange m'a annoncé la nouvelle", "J'étais vierge"] },
+            { name: "Jean", clues: ["J'étais le disciple bien-aimé", "J'ai écrit l'Apocalypse", "J'ai reposé sur le sein de Jésus"] },
+            { name: "Élie", clues: ["J'ai défié les prophètes de Baal", "J'ai été nourri par des corbeaux", "Je suis monté au ciel"] },
+            { name: "Samuel", clues: ["J'ai oint les rois", "Dieu m'a appelé enfant", "J'étais juge et prophète"] },
+            { name: "Ruth", clues: ["J'ai suivi ma belle-mère", "J'ai glané dans les champs", "Je suis devenue ancêtre de David"] }
+        ];
+
+        let currentCharacter = 0;
+        let characterScore = 0;
+        let currentClue = 0;
+        let characterStartTime = 0;
+        let currentCharacterData = null;
+
+        function startCharacterGame() {
+            currentCharacter = 0;
+            characterScore = 0;
+            currentClue = 0;
+            characterStartTime = Date.now();
+            showCharacterQuestion();
+        }
+
+        function showCharacterQuestion() {
+            // Sélectionner un personnage aléatoire pour un jeu infini
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            currentCharacterData = characters[randomIndex];
+            currentClue = 0;
+            
+            // Calculer le temps écoulé
+            const currentTime = Date.now();
+            const sessionTime = Math.floor((currentTime - characterStartTime) / 1000);
+            const minutes = Math.floor(sessionTime / 60);
+            const seconds = sessionTime % 60;
+            
+            createGameModal('Devine le Personnage Infini', `
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">🎭</div>
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                            Personnage ${currentCharacter + 1}
+                        </div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            ⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-xl mb-6">
+                    <div class="text-sm font-medium mb-2">Indice ${currentClue + 1}:</div>
+                    <p class="text-gray-800 italic">"${currentCharacterData.clues[currentClue]}"</p>
+                </div>
+                
+                <div class="mb-6">
+                    <input type="text" id="characterAnswer" class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none" placeholder="Qui suis-je ?" data-correct="${currentCharacterData.name}">
+                </div>
+                
+                <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
+                    <div>Score: ${characterScore}/${currentCharacter}</div>
+                    <div>Précision: ${currentCharacter > 0 ? Math.round((characterScore/currentCharacter)*100) : 0}%</div>
+                </div>
+                
+                <div class="space-y-3">
+                    <button onclick="checkCharacterAnswer()" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold interactive-btn">
+                        ✅ Vérifier
+                    </button>
+                    <button onclick="showNextClue()" class="w-full bg-yellow-500 text-white py-3 rounded-xl font-bold interactive-btn">
+                        💡 Indice suivant (${currentClue + 1}/${currentCharacterData.clues.length})
+                    </button>
+                    <button onclick="closeGameModal()" class="w-full bg-gray-100 text-gray-700 py-2 rounded-xl text-sm interactive-btn">
+                        ⏸️ Pause
+                    </button>
+                </div>
+            `);
+            
+            setTimeout(() => {
+                const input = document.getElementById('characterAnswer');
+                if (input) {
+                    input.focus();
+                    // Permettre validation avec Entrée
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            checkCharacterAnswer();
+                        }
+                    });
+                }
+            }, 100);
+        }
+
+        function checkCharacterAnswer() {
+            const input = document.getElementById('characterAnswer');
+            const userAnswer = input.value.toLowerCase().trim();
+            const correctAnswer = input.dataset.correct.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                const points = 3 - currentClue; // Plus de points si trouvé rapidement
+                characterScore += points;
+                showNotification(`✅ Bravo ! Bonne réponse ! +${points} points`);
+                currentCharacter++;
+                input.value = '';
+                setTimeout(() => {
+                    showCharacterQuestion(); // Continue infiniment
+                }, 1500);
+            } else {
+                showNotification('❌ Mauvaise réponse, essaie encore !');
+            }
+        }
+
+        function showNextClue() {
+            if (currentClue < currentCharacterData.clues.length - 1) {
+                currentClue++;
+                showCharacterQuestion();
+            } else {
+                showNotification('💡 Plus d\'indices disponibles ! Devine maintenant !');
+            }
+        }
+
+        // Jeu de personnages infini - plus de résultats finaux
+
+        // Utilitaires pour les jeux
+        function createGameModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'game-modal';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full max-h-[80vh] overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">${title}</h3>
+                        <button onclick="closeGameModal()" class="text-2xl text-gray-400 interactive-btn">×</button>
+                    </div>
+                    ${content}
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeGameModal() {
+            const modal = document.querySelector('.game-modal');
+            if (modal) modal.remove();
+        }
+
+        // ===== ADMIN PANEL =====
+        let adminPassword = 'PrayLink2024!';
+        let adminUnlocked = false;
+
+        // Écouter la combinaison Ctrl+Alt+B
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.altKey && e.key === 'b') {
+                e.preventDefault();
+                promptAdminPassword();
+            }
+        });
+
+        function promptAdminPassword() {
+            const password = prompt('🔐 Code d\'accès administrateur :');
+            if (password === adminPassword) {
+                adminUnlocked = true;
+                openAdminPanel();
+                showNotification('🔓 Accès administrateur accordé');
+            } else if (password !== null) {
+                showNotification('❌ Code incorrect');
+            }
+        }
+
+        function openAdminPanel() {
+            if (!adminUnlocked) {
+                promptAdminPassword();
+                return;
+            }
+            document.getElementById('adminPanel').style.display = 'block';
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        // ===== GOOGLE SHEETS INTEGRATION =====
+        async function sendToGoogleSheets(data) {
+            if (!appConfig.scriptUrl || appConfig.scriptUrl === 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec') {
+                console.log('Google Sheets non configuré, données sauvées localement');
+                saveToLocalStorage(data);
+                return;
+            }
+            
+            try {
+                const response = await fetch(appConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('Données envoyées à Google Sheets');
+                saveToLocalStorage(data); // Backup local
+            } catch (error) {
+                console.error('Erreur Google Sheets:', error);
+                saveToLocalStorage(data); // Fallback local
+            }
+        }
+        
+        async function loadFromGoogleSheets(action, params = {}) {
+            if (!appConfig.scriptUrl || appConfig.scriptUrl === 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec') {
+                return loadFromLocalStorage(action, params);
+            }
+            
+            try {
+                const url = new URL(appConfig.scriptUrl);
+                url.searchParams.append('action', action);
+                Object.keys(params).forEach(key => {
+                    url.searchParams.append(key, params[key]);
+                });
+                
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Erreur chargement Google Sheets:', error);
+                return loadFromLocalStorage(action, params);
+            }
+        }
+        
+        function saveToLocalStorage(data) {
+            const key = `praylink_${data.action}_${Date.now()}`;
+            localStorage.setItem(key, JSON.stringify(data));
+            
+            // Garder seulement les 100 derniers éléments
+            const keys = Object.keys(localStorage).filter(k => k.startsWith('praylink_'));
+            if (keys.length > 100) {
+                keys.sort().slice(0, keys.length - 100).forEach(k => localStorage.removeItem(k));
+            }
+        }
+        
+        function loadFromLocalStorage(action, params = {}) {
+            const keys = Object.keys(localStorage).filter(k => k.startsWith(`praylink_${action}`));
+            return keys.map(key => JSON.parse(localStorage.getItem(key))).filter(Boolean);
+        }
+        
+        function saveConfig() {
+            appConfig.name = document.getElementById('appName').value;
+            appConfig.baseUrl = document.getElementById('baseUrl').value;
+            appConfig.scriptUrl = document.getElementById('scriptUrl').value;
+            appConfig.sheetId = document.getElementById('sheetId').value;
+            
+            localStorage.setItem('praylink_config', JSON.stringify(appConfig));
+            updateUniversalLink();
+            showNotification('💾 Configuration sauvegardée !');
+        }
+
+        // ===== GESTION DES ONGLETS ADMIN =====
+        function showContentTab(tabName) {
+            // Cacher tous les contenus
+            document.querySelectorAll('.content-tab').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Réinitialiser les styles des onglets
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => {
+                tab.classList.remove('border-blue-500', 'text-blue-600');
+                tab.classList.add('text-gray-500');
+            });
+            
+            // Afficher le contenu sélectionné
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+            document.getElementById(tabName + 'Tab').classList.add('border-blue-500', 'text-blue-600');
+            document.getElementById(tabName + 'Tab').classList.remove('text-gray-500');
+        }
+
+        function saveContent() {
+            const questions = document.getElementById('predefinedQuestions').value;
+            const verses = document.getElementById('bibleVerses').value;
+            const quizQuestions = document.getElementById('quizQuestions').value;
+            const verseGameData = document.getElementById('verseGameData').value;
+            const prayersData = document.getElementById('prayersData').value;
+            const testimoniesData = document.getElementById('testimoniesData').value;
+            const charactersData = document.getElementById('charactersData').value;
+            
+            localStorage.setItem('praylink_questions', questions);
+            localStorage.setItem('praylink_verses', verses);
+            localStorage.setItem('praylink_quiz_questions', quizQuestions);
+            localStorage.setItem('praylink_verse_game_data', verseGameData);
+            localStorage.setItem('praylink_prayers_data', prayersData);
+            localStorage.setItem('praylink_testimonies_data', testimoniesData);
+            localStorage.setItem('praylink_characters_data', charactersData);
+            
+            // Recharger les données dans les jeux
+            loadCustomContent();
+            showNotification('💾 Tout le contenu sauvegardé !');
+        }
+
+        function loadDefaultContent() {
+            // Charger le contenu par défaut dans les champs
+            document.getElementById('quizQuestions').value = generateDefaultQuizContent();
+            document.getElementById('verseGameData').value = generateDefaultVerseGameContent();
+            document.getElementById('prayersData').value = generateDefaultPrayersContent();
+            document.getElementById('testimoniesData').value = generateDefaultTestimoniesContent();
+            document.getElementById('charactersData').value = generateDefaultCharactersContent();
+            showNotification('🔄 Contenu par défaut chargé !');
+        }
+
+        function exportContent() {
+            const content = {
+                questions: document.getElementById('predefinedQuestions').value,
+                verses: document.getElementById('bibleVerses').value,
+                quizQuestions: document.getElementById('quizQuestions').value,
+                verseGameData: document.getElementById('verseGameData').value,
+                prayersData: document.getElementById('prayersData').value,
+                testimoniesData: document.getElementById('testimoniesData').value,
+                charactersData: document.getElementById('charactersData').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `praylink-content-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('📤 Contenu exporté !');
+        }
+
+        function importContent() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const content = JSON.parse(e.target.result);
+                            
+                            if (content.questions) document.getElementById('predefinedQuestions').value = content.questions;
+                            if (content.verses) document.getElementById('bibleVerses').value = content.verses;
+                            if (content.quizQuestions) document.getElementById('quizQuestions').value = content.quizQuestions;
+                            if (content.verseGameData) document.getElementById('verseGameData').value = content.verseGameData;
+                            if (content.prayersData) document.getElementById('prayersData').value = content.prayersData;
+                            if (content.testimoniesData) document.getElementById('testimoniesData').value = content.testimoniesData;
+                            if (content.charactersData) document.getElementById('charactersData').value = content.charactersData;
+                            
+                            showNotification('📥 Contenu importé avec succès !');
+                        } catch (error) {
+                            showNotification('❌ Erreur lors de l\'importation');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function loadCustomContent() {
+            // Charger le contenu personnalisé depuis localStorage
+            const savedQuizQuestions = localStorage.getItem('praylink_quiz_questions');
+            const savedVerseGameData = localStorage.getItem('praylink_verse_game_data');
+            const savedPrayersData = localStorage.getItem('praylink_prayers_data');
+            const savedTestimoniesData = localStorage.getItem('praylink_testimonies_data');
+            const savedCharactersData = localStorage.getItem('praylink_characters_data');
+            
+            if (savedQuizQuestions) {
+                try {
+                    const customQuestions = parseQuizQuestions(savedQuizQuestions);
+                    if (customQuestions.length > 0) {
+                        quizQuestions.splice(0, quizQuestions.length, ...customQuestions);
+                    }
+                } catch (e) {
+                    console.log('Erreur parsing quiz questions:', e);
+                }
+            }
+            
+            if (savedVerseGameData) {
+                try {
+                    const customVerseData = parseVerseGameData(savedVerseGameData);
+                    if (customVerseData.length > 0) {
+                        verseGameData.splice(0, verseGameData.length, ...customVerseData);
+                    }
+                } catch (e) {
+                    console.log('Erreur parsing verse game data:', e);
+                }
+            }
+            
+            if (savedPrayersData) {
+                try {
+                    const customPrayers = parsePrayersData(savedPrayersData);
+                    if (customPrayers.length > 0) {
+                        prayers.splice(0, prayers.length, ...customPrayers);
+                    }
+                } catch (e) {
+                    console.log('Erreur parsing prayers data:', e);
+                }
+            }
+            
+            if (savedTestimoniesData) {
+                try {
+                    const customTestimonies = parseTestimoniesData(savedTestimoniesData);
+                    if (customTestimonies.length > 0) {
+                        testimonies.splice(0, testimonies.length, ...customTestimonies);
+                    }
+                } catch (e) {
+                    console.log('Erreur parsing testimonies data:', e);
+                }
+            }
+            
+            if (savedCharactersData) {
+                try {
+                    const customCharacters = parseCharactersData(savedCharactersData);
+                    if (customCharacters.length > 0) {
+                        characters.splice(0, characters.length, ...customCharacters);
+                    }
+                } catch (e) {
+                    console.log('Erreur parsing characters data:', e);
+                }
+            }
+        }
+
+        // Fonctions de parsing
+        function parseQuizQuestions(data) {
+            return data.split('\n').filter(line => line.trim()).map(line => {
+                const parts = line.split(' | ');
+                if (parts.length === 3) {
+                    const options = parts[1].split(',');
+                    return {
+                        question: parts[0],
+                        options: options,
+                        correct: parseInt(parts[2])
+                    };
+                }
+                return null;
+            }).filter(q => q !== null);
+        }
+
+        function parseVerseGameData(data) {
+            return data.split('\n').filter(line => line.trim()).map(line => {
+                const parts = line.split(' | ');
+                if (parts.length === 3) {
+                    return {
+                        incomplete: parts[0],
+                        missing: parts[1],
+                        ref: parts[2]
+                    };
+                }
+                return null;
+            }).filter(v => v !== null);
+        }
+
+        function parsePrayersData(data) {
+            return data.split('\n').filter(line => line.trim()).map(line => {
+                const parts = line.split(' | ');
+                if (parts.length === 2) {
+                    return {
+                        title: parts[0],
+                        text: parts[1]
+                    };
+                }
+                return null;
+            }).filter(p => p !== null);
+        }
+
+        function parseTestimoniesData(data) {
+            return data.split('\n').filter(line => line.trim()).map(line => {
+                const parts = line.split(' | ');
+                if (parts.length === 2) {
+                    return {
+                        title: parts[0],
+                        text: parts[1]
+                    };
+                }
+                return null;
+            }).filter(t => t !== null);
+        }
+
+        function parseCharactersData(data) {
+            return data.split('\n').filter(line => line.trim()).map(line => {
+                const parts = line.split(' | ');
+                if (parts.length === 2) {
+                    return {
+                        name: parts[0],
+                        clues: parts[1].split(',')
+                    };
+                }
+                return null;
+            }).filter(c => c !== null);
+        }
+
+        // Fonctions pour générer le contenu par défaut
+        function generateDefaultQuizContent() {
+            return quizQuestions.slice(0, 10).map(q => 
+                `${q.question} | ${q.options.join(',')} | ${q.correct}`
+            ).join('\n');
+        }
+
+        function generateDefaultVerseGameContent() {
+            return verseGameData.slice(0, 10).map(v => 
+                `${v.incomplete} | ${v.missing} | ${v.ref}`
+            ).join('\n');
+        }
+
+        function generateDefaultPrayersContent() {
+            return prayers.slice(0, 10).map(p => 
+                `${p.title} | ${p.text}`
+            ).join('\n');
+        }
+
+        function generateDefaultTestimoniesContent() {
+            return testimonies.slice(0, 5).map(t => 
+                `${t.title} | ${t.text}`
+            ).join('\n');
+        }
+
+        function generateDefaultCharactersContent() {
+            return characters.slice(0, 10).map(c => 
+                `${c.name} | ${c.clues.join(',')}`
+            ).join('\n');
+        }
+
+        async function refreshStats() {
+            showNotification('🔄 Chargement des statistiques...');
+            
+            try {
+                const stats = await loadFromGoogleSheets('getStats');
+                
+                if (stats && stats.length > 0) {
+                    const latestStats = stats[0];
+                    document.getElementById('totalUsers').textContent = latestStats.users || 127;
+                    document.getElementById('totalMessages').textContent = latestStats.messages || 1543;
+                    document.getElementById('totalGames').textContent = latestStats.games || 892;
+                    document.getElementById('totalShares').textContent = latestStats.shares || 2341;
+                } else {
+                    // Valeurs par défaut si pas de données
+                    document.getElementById('totalUsers').textContent = Math.floor(Math.random() * 200) + 100;
+                    document.getElementById('totalMessages').textContent = Math.floor(Math.random() * 2000) + 1000;
+                    document.getElementById('totalGames').textContent = Math.floor(Math.random() * 1000) + 500;
+                    document.getElementById('totalShares').textContent = Math.floor(Math.random() * 3000) + 2000;
+                }
+                
+                showNotification('📊 Statistiques actualisées !');
+            } catch (error) {
+                console.error('Erreur chargement stats:', error);
+                showNotification('❌ Erreur de chargement des stats');
+            }
+        }
+        
+        function saveGameStats(gameType, score, duration) {
+            const gameData = {
+                action: 'saveGameStats',
+                gameType: gameType,
+                score: score,
+                duration: duration,
+                player: username,
+                timestamp: new Date().toISOString()
+            };
+            
+            sendToGoogleSheets(gameData);
+        }
+
+        function exportData() {
+            const data = {
+                config: appConfig,
+                stats: {
+                    users: document.getElementById('totalUsers').textContent,
+                    messages: document.getElementById('totalMessages').textContent,
+                    games: document.getElementById('totalGames').textContent,
+                    shares: document.getElementById('totalShares').textContent
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `praylink-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('📥 Données exportées !');
+        }
+
+        function downloadApp() {
+            const htmlContent = document.documentElement.outerHTML;
+            const configuredHtml = htmlContent
+                .replace(/appConfig = \{[^}]+\}/, `appConfig = ${JSON.stringify(appConfig)}`)
+                .replace('let username = \'\';', `let username = '${username}';`)
+                .replace('let profileEmoji = \'🙏\';', `let profileEmoji = '${profileEmoji}';`);
+            
+            const blob = new Blob([configuredHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'index.html';
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('📱 App téléchargée ! Prête pour Vercel.');
+        }
+
+        function generateVercelConfig() {
+            const vercelConfig = {
+                "name": appConfig.name.toLowerCase().replace(/\s+/g, '-'),
+                "version": 2,
+                "builds": [
+                    {
+                        "src": "index.html",
+                        "use": "@vercel/static"
+                    }
+                ],
+                "routes": [
+                    {
+                        "src": "/u/(.*)",
+                        "dest": "/index.html"
+                    },
+                    {
+                        "src": "/(.*)",
+                        "dest": "/index.html"
+                    }
+                ]
+            };
+
+            const packageJson = {
+                "name": appConfig.name.toLowerCase().replace(/\s+/g, '-'),
+                "version": "1.0.0",
+                "description": "PrayLink - Messages anonymes bibliques",
+                "main": "index.html",
+                "scripts": {
+                    "dev": "vercel dev",
+                    "build": "echo 'Static build'",
+                    "start": "vercel dev"
+                },
+                "keywords": ["praylink", "bible", "messages", "anonymes"],
+                "author": "PrayLink Team"
+            };
+
+            // Télécharger vercel.json
+            const vercelBlob = new Blob([JSON.stringify(vercelConfig, null, 2)], { type: 'application/json' });
+            const vercelUrl = URL.createObjectURL(vercelBlob);
+            const vercelLink = document.createElement('a');
+            vercelLink.href = vercelUrl;
+            vercelLink.download = 'vercel.json';
+            vercelLink.click();
+            URL.revokeObjectURL(vercelUrl);
+
+            // Télécharger package.json
+            setTimeout(() => {
+                const packageBlob = new Blob([JSON.stringify(packageJson, null, 2)], { type: 'application/json' });
+                const packageUrl = URL.createObjectURL(packageBlob);
+                const packageLink = document.createElement('a');
+                packageLink.href = packageUrl;
+                packageLink.download = 'package.json';
+                packageLink.click();
+                URL.revokeObjectURL(packageUrl);
+            }, 500);
+
+            showNotification('⚡ Configuration Vercel générée !');
+        }
+
+        function generateQR() {
+            const link = `${appConfig.baseUrl}/u/${username}`;
+            showNotification(`📱 QR Code pour: ${link}`);
+        }
+        
+        function generateAppsScript() {
+            const appsScriptCode = `
+// PrayLink Google Apps Script
+// Copiez ce code dans Google Apps Script et déployez comme application web
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const sheet = SpreadsheetApp.getActiveSpreadsheet();
+    
+    switch(data.action) {
+      case 'sendMessage':
+        return saveMessage(sheet, data);
+      case 'saveGameStats':
+        return saveGameStats(sheet, data);
+      default:
+        return ContentService.createTextOutput(JSON.stringify({error: 'Action inconnue'}));
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({error: error.toString()}));
+  }
+}
+
+function doGet(e) {
+  try {
+    const action = e.parameter.action;
+    const sheet = SpreadsheetApp.getActiveSpreadsheet();
+    
+    switch(action) {
+      case 'getMessages':
+        return getMessages(sheet, e.parameter);
+      case 'getStats':
+        return getStats(sheet);
+      default:
+        return ContentService.createTextOutput(JSON.stringify({error: 'Action inconnue'}));
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({error: error.toString()}));
+  }
+}
+
+function saveMessage(sheet, data) {
+  let messagesSheet = sheet.getSheetByName('Messages');
+  if (!messagesSheet) {
+    messagesSheet = sheet.insertSheet('Messages');
+    messagesSheet.getRange(1, 1, 1, 6).setValues([['Timestamp', 'Recipient', 'Sender', 'Message', 'Context', 'ID']]);
+  }
+  
+  const row = [
+    data.timestamp,
+    data.recipient,
+    data.sender,
+    data.message,
+    data.context,
+    Utilities.getUuid()
+  ];
+  
+  messagesSheet.appendRow(row);
+  
+  return ContentService.createTextOutput(JSON.stringify({success: true}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getMessages(sheet, params) {
+  let messagesSheet = sheet.getSheetByName('Messages');
+  if (!messagesSheet) {
+    return ContentService.createTextOutput(JSON.stringify([]))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  const data = messagesSheet.getDataRange().getValues();
+  const headers = data[0];
+  const messages = [];
+  
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (row[1] === params.recipient) { // Filtrer par destinataire
+      messages.push({
+        timestamp: row[0],
+        recipient: row[1],
+        sender: row[2],
+        message: row[3],
+        context: row[4],
+        id: row[5]
+      });
+    }
+  }
+  
+  // Trier par timestamp décroissant
+  messages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
+  return ContentService.createTextOutput(JSON.stringify(messages))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function saveGameStats(sheet, data) {
+  let statsSheet = sheet.getSheetByName('GameStats');
+  if (!statsSheet) {
+    statsSheet = sheet.insertSheet('GameStats');
+    statsSheet.getRange(1, 1, 1, 6).setValues([['Timestamp', 'Player', 'GameType', 'Score', 'Duration', 'ID']]);
+  }
+  
+  const row = [
+    data.timestamp,
+    data.player,
+    data.gameType,
+    data.score,
+    data.duration,
+    Utilities.getUuid()
+  ];
+  
+  statsSheet.appendRow(row);
+  
+  return ContentService.createTextOutput(JSON.stringify({success: true}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getStats(sheet) {
+  const stats = {
+    users: getUniqueCount(sheet, 'Messages', 1), // Unique recipients
+    messages: getTotalCount(sheet, 'Messages'),
+    games: getTotalCount(sheet, 'GameStats'),
+    shares: Math.floor(Math.random() * 1000) + 500 // Simulé pour l'instant
+  };
+  
+  return ContentService.createTextOutput(JSON.stringify([stats]))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getUniqueCount(sheet, sheetName, columnIndex) {
+  const targetSheet = sheet.getSheetByName(sheetName);
+  if (!targetSheet) return 0;
+  
+  const data = targetSheet.getDataRange().getValues();
+  const uniqueValues = new Set();
+  
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][columnIndex]) {
+      uniqueValues.add(data[i][columnIndex]);
+    }
+  }
+  
+  return uniqueValues.size;
+}
+
+function getTotalCount(sheet, sheetName) {
+  const targetSheet = sheet.getSheetByName(sheetName);
+  if (!targetSheet) return 0;
+  
+  return Math.max(0, targetSheet.getLastRow() - 1); // -1 pour exclure l'en-tête
+}
+
+// Fonction pour initialiser les feuilles
+function initializeSheets() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  
+  // Créer feuille Messages
+  let messagesSheet = sheet.getSheetByName('Messages');
+  if (!messagesSheet) {
+    messagesSheet = sheet.insertSheet('Messages');
+    messagesSheet.getRange(1, 1, 1, 6).setValues([['Timestamp', 'Recipient', 'Sender', 'Message', 'Context', 'ID']]);
+  }
+  
+  // Créer feuille GameStats
+  let statsSheet = sheet.getSheetByName('GameStats');
+  if (!statsSheet) {
+    statsSheet = sheet.insertSheet('GameStats');
+    statsSheet.getRange(1, 1, 1, 6).setValues([['Timestamp', 'Player', 'GameType', 'Score', 'Duration', 'ID']]);
+  }
+  
+  return 'Feuilles initialisées avec succès!';
+}
+`;
+            
+            // Créer et télécharger le fichier
+            const blob = new Blob([appsScriptCode], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'PrayLink-AppsScript.gs';
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('📋 Code Apps Script généré et téléchargé !');
+        }
+        
+        async function testConnection() {
+            if (!appConfig.scriptUrl || appConfig.scriptUrl === 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec') {
+                showNotification('❌ Configurez d\'abord l\'URL Apps Script');
+                return;
+            }
+            
+            try {
+                showNotification('🔗 Test de connexion...');
+                
+                const testData = {
+                    action: 'sendMessage',
+                    recipient: 'test',
+                    sender: 'System',
+                    message: 'Test de connexion PrayLink',
+                    context: 'Test',
+                    timestamp: new Date().toISOString()
+                };
+                
+                await sendToGoogleSheets(testData);
+                showNotification('✅ Connexion réussie ! Google Sheets configuré.');
+            } catch (error) {
+                showNotification('❌ Erreur de connexion. Vérifiez la configuration.');
+                console.error('Erreur test connexion:', error);
+            }
+        }
+        
+        function createSampleSheet() {
+            const sheetUrl = `https://docs.google.com/spreadsheets/d/${appConfig.sheetId || 'VOTRE_SHEET_ID'}/edit`;
+            
+            if (appConfig.sheetId && appConfig.sheetId !== 'YOUR_GOOGLE_SHEET_ID') {
+                window.open(sheetUrl, '_blank');
+                showNotification('📄 Ouverture de votre Google Sheet...');
+            } else {
+                window.open('https://sheets.google.com/create', '_blank');
+                showNotification('📄 Création d\'un nouveau Google Sheet...');
+            }
+        }
+
+        // ===== UTILITAIRES =====
+        async function refreshInbox() {
+            showNotification('🔄 Chargement des messages...');
+            
+            try {
+                const messages = await loadFromGoogleSheets('getMessages', { recipient: username });
+                displayMessages(messages);
+                document.getElementById('messageCount').textContent = messages.length;
+                showNotification('✅ Messages chargés !');
+            } catch (error) {
+                console.error('Erreur chargement messages:', error);
+                showNotification('❌ Erreur de chargement');
+            }
+        }
+        
+        function displayMessages(messages) {
+            const messagesList = document.getElementById('messagesList');
+            
+            if (!messages || messages.length === 0) {
+                messagesList.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-4">📭</div>
+                        <p>Aucun message pour le moment</p>
+                        <p class="text-sm mt-2">Partage ton lien pour recevoir des messages !</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            messagesList.innerHTML = messages.map(msg => {
+                const timeAgo = getTimeAgo(new Date(msg.timestamp));
+                const contextColor = getContextColor(msg.context);
+                
+                return `
+                    <div class="bg-white rounded-2xl p-4 border border-gray-200">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-sm text-gray-500">${msg.sender} • ${timeAgo}</div>
+                            <div class="text-xs ${contextColor} px-2 py-1 rounded-full">${msg.context}</div>
+                        </div>
+                        <p class="text-gray-800 mb-3">"${msg.message}"</p>
+                        <button onclick="openResponsePage('${msg.sender}', '${msg.message.replace(/'/g, "\\'")}', '${msg.context}')" 
+                                class="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium interactive-btn">
+                            💬 Répondre
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getContextColor(context) {
+            const colors = {
+                'Question': 'bg-blue-100 text-blue-800',
+                'Prière': 'bg-green-100 text-green-800',
+                'Verset': 'bg-purple-100 text-purple-800',
+                'Témoignage': 'bg-orange-100 text-orange-800'
+            };
+            return colors[context] || 'bg-gray-100 text-gray-800';
+        }
+        
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'à l\'instant';
+            if (diffMins < 60) return `il y a ${diffMins}min`;
+            if (diffHours < 24) return `il y a ${diffHours}h`;
+            if (diffDays < 7) return `il y a ${diffDays}j`;
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // ===== INITIALISATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger la configuration sauvegardée
+            const savedConfig = localStorage.getItem('praylink_config');
+            if (savedConfig) {
+                appConfig = JSON.parse(savedConfig);
+                document.getElementById('appName').value = appConfig.name;
+                document.getElementById('baseUrl').value = appConfig.baseUrl;
+                document.getElementById('scriptUrl').value = appConfig.scriptUrl;
+                document.getElementById('sheetId').value = appConfig.sheetId || '';
+            }
+            
+            // Charger le contenu personnalisé
+            loadCustomContent();
+            
+            // Pré-remplir les champs admin avec le contenu par défaut si vides
+            setTimeout(() => {
+                if (document.getElementById('quizQuestions').value === '') {
+                    document.getElementById('quizQuestions').value = generateDefaultQuizContent();
+                }
+                if (document.getElementById('verseGameData').value === '') {
+                    document.getElementById('verseGameData').value = generateDefaultVerseGameContent();
+                }
+                if (document.getElementById('prayersData').value === '') {
+                    document.getElementById('prayersData').value = generateDefaultPrayersContent();
+                }
+                if (document.getElementById('testimoniesData').value === '') {
+                    document.getElementById('testimoniesData').value = generateDefaultTestimoniesContent();
+                }
+                if (document.getElementById('charactersData').value === '') {
+                    document.getElementById('charactersData').value = generateDefaultCharactersContent();
+                }
+            }, 100);
+        });
+
+        // ===== FONCTIONS DE PARTAGE =====
+        function shareRandomVerse() {
+            const randomVerse = bibleVerses[Math.floor(Math.random() * bibleVerses.length)];
+            const shareText = `📖 Verset du jour :\n\n"${randomVerse.text}"\n\n${randomVerse.ref}\n\n🙏 Partage ton PrayLink : ${appConfig.baseUrl}/u/${username}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Verset du jour - PrayLink',
+                    text: shareText
+                });
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('📖 Verset copié ! Partage-le maintenant.');
+                });
+            }
+        }
+
+        function shareRandomPrayer() {
+            const randomPrayer = prayers[Math.floor(Math.random() * prayers.length)];
+            const shareText = `🙏 ${randomPrayer.title} :\n\n${randomPrayer.text}\n\n✨ Partage tes demandes de prière : ${appConfig.baseUrl}/u/${username}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Prière du jour - PrayLink',
+                    text: shareText
+                });
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('🙏 Prière copiée ! Partage-la maintenant.');
+                });
+            }
+        }
+
+        function shareRandomTestimony() {
+            const randomTestimony = testimonies[Math.floor(Math.random() * testimonies.length)];
+            const shareText = `✨ ${randomTestimony.title} :\n\n${randomTestimony.text}\n\n💫 Partage ton témoignage : ${appConfig.baseUrl}/u/${username}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Témoignage - PrayLink',
+                    text: shareText
+                });
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('✨ Témoignage copié ! Partage-le maintenant.');
+                });
+            }
+        }
+
+        // Gestion des paramètres URL pour les réponses
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const recipient = urlParams.get('to');
+            const context = urlParams.get('context') || 'question';
+            const message = urlParams.get('message');
+            
+            if (recipient) {
+                const defaultMessages = {
+                    question: 'Quel est ton verset préféré ?',
+                    verse: 'Partage un verset qui t\'inspire',
+                    prayer: 'Pour quoi aimerais-tu qu\'on prie ?',
+                    testimony: 'Partage un témoignage de foi'
+                };
+                
+                openResponsePage(recipient, message || defaultMessages[context], context);
+            }
+        }
+
+        window.addEventListener('load', checkUrlParams);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e71af444dbf81a',t:'MTc1Nzc2MDg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
+
+</body></html>
