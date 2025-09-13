@@ -1666,47 +1666,63 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
 
         // ===== GOOGLE SHEETS INTEGRATION =====
         async function sendToGoogleSheets(data) {
-            if (!appConfig.scriptUrl || appConfig.scriptUrl === 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec') {
-                console.log('Google Sheets non configuré, données sauvées localement');
+            if (!appConfig.scriptUrl || appConfig.scriptUrl.includes('YOUR_SCRIPT_ID')) {
+                console.log('Google Sheets non configuré. Le message est sauvegardé localement.');
                 saveToLocalStorage(data);
                 return;
             }
             
             try {
+                // IMPORTANT: 'no-cors' est retiré. C'est la correction principale.
+                // Google Apps Script gère correctement la sécurité (CORS) pour les applications déployées.
                 const response = await fetch(appConfig.scriptUrl, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify(data)
                 });
                 
-                console.log('Données envoyées à Google Sheets');
-                saveToLocalStorage(data); // Backup local
+                // On attend une réponse JSON de notre script pour confirmer le succès.
+                const result = await response.json();
+
+                if (result.success) {
+                    console.log('Données envoyées à Google Sheets avec succès.');
+                } else {
+                    // Le script a retourné une erreur.
+                    console.error('Erreur retournée par Google Sheets:', result.error);
+                    showNotification('❌ Erreur serveur. Message sauvegardé localement.');
+                    saveToLocalStorage(data); // Sauvegarde locale en cas d'échec.
+                }
             } catch (error) {
-                console.error('Erreur Google Sheets:', error);
-                saveToLocalStorage(data); // Fallback local
+                // Cela attrape les erreurs réseau ou si la réponse n'est pas un JSON valide.
+                console.error('Erreur réseau ou de parsing avec Google Sheets:', error);
+                saveToLocalStorage(data); // Sauvegarde locale en cas d'échec.
+                showNotification('❌ Erreur réseau. Message sauvegardé localement.');
             }
         }
         
         async function loadFromGoogleSheets(action, params = {}) {
-            if (!appConfig.scriptUrl || appConfig.scriptUrl === 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec') {
+            if (!appConfig.scriptUrl || appConfig.scriptUrl.includes('YOUR_SCRIPT_ID')) {
+                console.log('Google Sheets non configuré. Chargement depuis le stockage local.');
                 return loadFromLocalStorage(action, params);
             }
             
             try {
                 const url = new URL(appConfig.scriptUrl);
                 url.searchParams.append('action', action);
-                Object.keys(params).forEach(key => {
-                    url.searchParams.append(key, params[key]);
-                });
+                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
                 
                 const response = await fetch(url.toString());
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
                 const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(`Erreur du script: ${data.error}`);
+                }
                 return data;
             } catch (error) {
-                console.error('Erreur chargement Google Sheets:', error);
+                console.error('Erreur lors du chargement depuis Google Sheets:', error);
+                showNotification('⚠️ Impossible de charger les messages du serveur.');
                 return loadFromLocalStorage(action, params);
             }
         }
