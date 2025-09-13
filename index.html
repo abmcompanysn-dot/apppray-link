@@ -2552,24 +2552,32 @@ function initializeSheets() {
 
         // Gestion des paramètres URL pour les réponses
         function checkUrlParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const recipient = urlParams.get('to');
-            const context = urlParams.get('context') || 'question';
-            const message = urlParams.get('message');
+            const path = window.location.pathname;
+            const match = path.match(/^\/u\/([^/]+)/);
             
-            if (recipient) {
+            if (match) {
+                const recipient = match[1];
+                const urlParams = new URLSearchParams(window.location.search);
+                const context = urlParams.get('context') || 'question';
+                const message = urlParams.get('message');
+
                 const defaultMessages = {
-                    question: 'Quel est ton verset préféré ?',
-                    verse: 'Partage un verset qui t\'inspire',
-                    prayer: 'Pour quoi aimerais-tu qu\'on prie ?',
-                    testimony: 'Partage un témoignage de foi'
+                    question: 'Pose-moi une question biblique !',
+                    verse: 'Partage-moi un verset qui t\'a touché.',
+                    prayer: 'Laisse une demande de prière.',
+                    testimony: 'Partage un témoignage pour m\'encourager.'
                 };
                 
-                openResponsePage(recipient, message || defaultMessages[context], context);
+                document.getElementById('responseRecipient').textContent = '@' + recipient;
+                document.getElementById('originalMessage').textContent = '"' + (message || defaultMessages[context]) + '"';
+                document.getElementById('responseContext').textContent = context.charAt(0).toUpperCase() + context.slice(1);
+                
+                // Cacher l'app principale et afficher la page de réponse
+                document.querySelector('.app-container').style.display = 'none';
+                document.getElementById('responsePage').classList.remove('hidden');
             }
         }
 
         window.addEventListener('load', checkUrlParams);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e71af444dbf81a',t:'MTc1Nzc2MDg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
