@@ -207,7 +207,8 @@
                     <input type="text" id="usernameInput" placeholder="@tonnom" 
                            class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-lg focus:border-gray-900 focus:outline-none">
                 </div>
-                <button onclick="checkUserAndProceed()" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl mb-4 interactive-btn hover:glow">
+                
+                <button onclick="goToPage('profilePhotoPage')" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl mb-4 interactive-btn hover:glow">
                     Continuer
                 </button>
             </div>
@@ -2181,14 +2182,6 @@
 
     </div>
 
-    <!-- Loader Overlay -->
-    <div id="loader" class="fixed inset-0 bg-black bg-opacity-25 hidden items-center justify-center z-50">
-        <div class="w-16 h-16 border-4 border-white border-t-purple-500 rounded-full animate-spin"></div>
-    </div>
-
-
-
-
     <script>
         let currentPage = 'welcomePage';
         let selectedPlatform = '';
@@ -2200,7 +2193,12 @@
         let currentFilter = 'all';
 
         // IMPORTANT: Remplacez cette URL par l'URL de votre script Google Apps Script déployé
-        const SCRIPT_URL = 'VOTRE_URL_GOOGLE_APPS_SCRIPT_ICI';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznqEPPRCC79rujx_rKALbzHftiJIZ2WP0-F-jPZ-GDNh6zT0sWCwhyyvNOVdmuR4oiMA/exec';
+
+        // Loader functions
+        function showLoader() { document.getElementById('loader').classList.remove('hidden'); document.getElementById('loader').classList.add('flex'); }
+        function hideLoader() { document.getElementById('loader').classList.add('hidden'); document.getElementById('loader').classList.remove('flex'); }
+
 
         // Données d'indices d'activité
         const insightsData = {
@@ -2351,6 +2349,225 @@
                 isLiked: false,
                 link: 'https://praylink.app/v/emmagrace/5'
             }
+        ];
+
+        // Messages de conversation exemple
+        const conversationData = {
+            'Marie_2024': {
+                avatar: '🌸',
+                status: 'En ligne',
+                messages: [
+                    { type: 'received', text: 'Salut ! J\'ai vu que tu as aimé mon verset 😊', time: '14:35' },
+                    { type: 'received', text: 'Jean 3:16 me touche vraiment en ce moment', time: '14:35' },
+                    { type: 'sent', text: 'Salut Marie ! Oui, ce verset est magnifique 🙏', time: '14:37' },
+                    { type: 'received', text: 'Tu as un verset qui te parle en ce moment ?', time: '14:38' }
+                ]
+            }
+        };
+
+        // Base de données de questions infinies
+        const questionCategories = {
+            versets: [
+                'Quel verset biblique te parle aujourd\'hui ?',
+                'Envoie-moi ton verset préféré, anonymement',
+                'Quel verset t\'a aidé à traverser une épreuve ?',
+                'Si tu devais offrir un verset à quelqu\'un ce soir ?',
+                'Quel verset te donne de l\'espoir ?',
+                'Partage un verset qui t\'a marqué cette semaine',
+                'Quel verset récites-tu quand tu as peur ?',
+                'Un verset qui te fait sourire ?',
+                'Le verset que tu aimerais graver dans ton cœur ?',
+                'Quel verset t\'aide à pardonner ?',
+                'Un verset pour les moments difficiles ?',
+                'Le verset qui décrit le mieux l\'amour de Dieu ?',
+                'Quel verset te rappelle la fidélité de Dieu ?',
+                'Un verset qui t\'encourage à persévérer ?',
+                'Le verset qui t\'aide à avoir confiance ?',
+                'Quel verset te parle de la paix ?',
+                'Un verset sur la joie qui te touche ?',
+                'Le verset qui t\'aide dans tes relations ?',
+                'Quel verset te rappelle ta valeur aux yeux de Dieu ?',
+                'Un verset qui t\'aide à gérer le stress ?'
+            ],
+            foi: [
+                'Qu\'est-ce que la foi pour toi ?',
+                'Comment ta foi a-t-elle grandi cette année ?',
+                'Raconte un moment où ta foi a été testée',
+                'Qu\'est-ce qui renforce ta foi au quotidien ?',
+                'Comment expliques-tu ta foi à tes amis ?',
+                'Quel est ton plus grand défi de foi ?',
+                'Comment pries-tu quand tu doutes ?',
+                'Qu\'est-ce qui t\'a amené à croire ?',
+                'Comment vois-tu Dieu dans ta vie ?',
+                'Quel miracle as-tu vécu récemment ?',
+                'Comment Dieu t\'a-t-il surpris cette semaine ?',
+                'Qu\'est-ce que tu aimerais demander à Jésus ?',
+                'Comment sens-tu la présence de Dieu ?',
+                'Quel est ton témoignage en une phrase ?',
+                'Comment ta foi influence-t-elle tes choix ?',
+                'Qu\'est-ce que tu aimerais voir Dieu faire ?',
+                'Comment Dieu t\'a-t-il consolé récemment ?',
+                'Quel aspect de Dieu t\'émerveille le plus ?',
+                'Comment partages-tu ta foi avec les autres ?',
+                'Qu\'est-ce que tu apprends sur Dieu en ce moment ?'
+            ],
+            priere: [
+                'Comment pries-tu quand tu es triste ?',
+                'Quelle est ta prière du matin ?',
+                'Pour quoi pries-tu le plus souvent ?',
+                'Comment Dieu a-t-il répondu à tes prières ?',
+                'Quel est ton lieu de prière préféré ?',
+                'Comment pries-tu quand tu es en colère ?',
+                'Quelle prière t\'a le plus marqué ?',
+                'Comment pries-tu pour tes amis ?',
+                'Qu\'est-ce qui t\'aide à te concentrer en priant ?',
+                'Comment pries-tu dans les transports ?',
+                'Quelle est ta prière avant de dormir ?',
+                'Comment pries-tu quand tu es stressé ?',
+                'Pour qui aimerais-tu qu\'on prie ?',
+                'Comment pries-tu en groupe ?',
+                'Quelle prière de la Bible t\'inspire ?',
+                'Comment pries-tu quand tu es reconnaissant ?',
+                'Qu\'est-ce que tu demandes le plus à Dieu ?',
+                'Comment pries-tu pour ton avenir ?',
+                'Quelle est ta prière d\'intercession ?',
+                'Comment pries-tu dans la nature ?'
+            ],
+            personnages: [
+                'Quel personnage biblique t\'inspire le plus ?',
+                'Si tu pouvais dîner avec un personnage biblique ?',
+                'Quel personnage biblique te ressemble ?',
+                'Quelle femme de la Bible t\'inspire ?',
+                'Quel roi de la Bible admires-tu ?',
+                'Quel prophète aimerais-tu rencontrer ?',
+                'Quel disciple de Jésus te ressemble ?',
+                'Quelle histoire biblique te marque ?',
+                'Quel personnage biblique a eu le plus de courage ?',
+                'Qui dans la Bible a montré le plus d\'amour ?',
+                'Quel personnage biblique a surmonté ses peurs ?',
+                'Qui dans la Bible t\'apprend la patience ?',
+                'Quel personnage biblique a eu la foi la plus forte ?',
+                'Qui dans la Bible t\'inspire pour le pardon ?',
+                'Quel personnage biblique était le plus fidèle ?',
+                'Qui dans la Bible a montré le plus d\'humilité ?',
+                'Quel personnage biblique t\'apprend la persévérance ?',
+                'Qui dans la Bible a eu le cœur le plus généreux ?',
+                'Quel personnage biblique t\'inspire pour servir ?',
+                'Qui dans la Bible a montré le plus de sagesse ?'
+            ],
+            vie: [
+                'Comment vis-tu ta foi au travail/école ?',
+                'Quel défi spirituel traverses-tu ?',
+                'Comment Dieu guide-t-il tes décisions ?',
+                'Qu\'est-ce que tu aimerais changer dans ta vie ?',
+                'Comment gères-tu les tentations ?',
+                'Qu\'est-ce qui te rapproche de Dieu ?',
+                'Comment aides-tu les autres autour de toi ?',
+                'Quel fruit de l\'Esprit développes-tu ?',
+                'Comment gères-tu les conflits ?',
+                'Qu\'est-ce que tu apprends sur l\'amour ?',
+                'Comment pratiques-tu le pardon ?',
+                'Quel service rends-tu à ton église ?',
+                'Comment honores-tu tes parents ?',
+                'Qu\'est-ce qui te donne de la joie ?',
+                'Comment gères-tu l\'anxiété ?',
+                'Qu\'est-ce que tu fais pour grandir spirituellement ?',
+                'Comment aimes-tu tes ennemis ?',
+                'Qu\'est-ce que tu sacrifies pour Dieu ?',
+                'Comment utilises-tu tes talents pour Dieu ?',
+                'Qu\'est-ce que tu fais pour la justice ?'
+            ],
+            espoir: [
+                'Qu\'est-ce qui te donne de l\'espoir aujourd\'hui ?',
+                'Comment vois-tu ton avenir avec Dieu ?',
+                'Quel rêve as-tu pour le royaume de Dieu ?',
+                'Comment Dieu restaure-t-il ta vie ?',
+                'Qu\'est-ce que tu attends avec impatience ?',
+                'Comment l\'espoir change-t-il ta perspective ?',
+                'Quel miracle espères-tu voir ?',
+                'Comment encourages-tu les autres ?',
+                'Qu\'est-ce qui te motive à continuer ?',
+                'Comment vois-tu Dieu agir dans le monde ?',
+                'Quel changement espères-tu voir ?',
+                'Comment l\'espoir t\'aide-t-il dans les épreuves ?',
+                'Qu\'est-ce que tu espères apprendre ?',
+                'Comment partages-tu l\'espoir avec les autres ?',
+                'Quel impact veux-tu avoir ?',
+                'Comment l\'espoir influence-t-il tes prières ?',
+                'Qu\'est-ce que tu espères pour ta famille ?',
+                'Comment l\'espoir change-t-il tes relations ?',
+                'Quel héritage spirituel veux-tu laisser ?',
+                'Comment l\'espoir t\'aide-t-il à pardonner ?'
+            ]
+        };
+
+        const questionEmojis = ['📖', '🙏', '💝', '✨', '💪', '🌟', '❤️', '🕊️', '🔥', '💫', '🌈', '⭐', '💎', '🎯', '🌸', '🦋', '🌅', '🎵', '🏆', '💖'];
+        const questionColors = [
+            'from-blue-500 to-indigo-600',
+            'from-purple-500 to-pink-600', 
+            'from-green-500 to-teal-600',
+            'from-pink-500 to-rose-600',
+            'from-yellow-500 to-orange-600',
+            'from-indigo-500 to-purple-600',
+            'from-amber-500 to-yellow-600',
+            'from-blue-400 to-cyan-500',
+            'from-violet-500 to-purple-600',
+            'from-emerald-500 to-green-600',
+            'from-red-500 to-pink-600',
+            'from-teal-500 to-cyan-600',
+            'from-orange-500 to-red-600',
+            'from-lime-500 to-green-600',
+            'from-fuchsia-500 to-pink-600',
+            'from-sky-500 to-blue-600',
+            'from-rose-500 to-pink-600',
+            'from-cyan-500 to-teal-600',
+            'from-indigo-400 to-purple-500',
+            'from-emerald-400 to-teal-500'
+        ];
+
+        // Fonction pour générer une question aléatoire infinie
+        function generateInfiniteQuestion() {
+            const categories = Object.keys(questionCategories);
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            const categoryQuestions = questionCategories[randomCategory];
+            const randomQuestion = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
+            const randomEmoji = questionEmojis[Math.floor(Math.random() * questionEmojis.length)];
+            const randomColor = questionColors[Math.floor(Math.random() * questionColors.length)];
+            
+            return {
+                text: randomQuestion,
+                emoji: randomEmoji,
+                color: randomColor,
+                buttonColor: 'bg-purple-600',
+                category: randomCategory
+            };
+        }
+
+        // Questions actuelles (générées dynamiquement)
+        let allQuestions = [];
+        let totalQuestionsGenerated = 0;
+
+        // Initialiser avec 100 questions
+        function initializeQuestions() {
+            allQuestions = [];
+            for (let i = 0; i < 100; i++) {
+                allQuestions.push(generateInfiniteQuestion());
+                totalQuestionsGenerated++;
+            }
+        }
+
+        // Versets bibliques
+        const allVersets = [
+            { text: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle.", ref: "Jean 3:16" },
+            { text: "Je puis tout par celui qui me fortifie.", ref: "Philippiens 4:13" },
+            { text: "L'Éternel est mon berger: je ne manquerai de rien.", ref: "Psaume 23:1" },
+            { text: "Cherchez premièrement le royaume et la justice de Dieu; et toutes ces choses vous seront données par-dessus.", ref: "Matthieu 6:33" },
+            { text: "Car mes pensées ne sont pas vos pensées, et vos voies ne sont pas mes voies, dit l'Éternel.", ref: "Ésaïe 55:8" },
+            { text: "Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos.", ref: "Matthieu 11:28" },
+            { text: "Et nous savons que toutes choses concourent au bien de ceux qui aiment Dieu.", ref: "Romains 8:28" },
+            { text: "Que votre cœur ne se trouble point. Croyez en Dieu, et croyez en moi.", ref: "Jean 14:1" },
+            { text: "L'Éternel combattra pour vous; et vous, gardez le silence.", ref: "Exode 14:14" },
+            { text: "Car là où deux ou trois sont assemblés en mon nom, je suis au milieu d'eux.", ref: "Matthieu 18:20" }
         ];
 
         // Quiz data
@@ -2870,17 +3087,6 @@
             currentVerse: 0
         };
 
-        // Loader functions
-        function showLoader() {
-            document.getElementById('loader').classList.remove('hidden');
-            document.getElementById('loader').classList.add('flex');
-        }
-
-        function hideLoader() {
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('loader').classList.remove('flex');
-        }
-
         function goToPage(pageId) {
             // Cacher toutes les pages
             const pages = ['welcomePage', 'platformPage', 'usernamePage', 'profilePhotoPage', 'premiumPage', 'mainPage', 'settingsPage', 'inboxPage'];
@@ -2897,10 +3103,6 @@
             // Charger le contenu spécifique à la page
             if (pageId === 'inboxPage') {
                 loadTodayVerses();
-            }
-
-            if (pageId === 'mainPage') {
-                loadInboxMessages();
             }
             
             showNotification(`📱 Navigation vers ${pageId}`);
@@ -2926,82 +3128,6 @@
             }
             
             showNotification(`${emoji} Emoji sélectionné !`);
-        }
-
-        async function checkUserAndProceed() {
-            const usernameInput = document.getElementById('usernameInput').value.trim();
-            if (!usernameInput) {
-                showNotification('❌ Veuillez entrer un nom d\'utilisateur.');
-                return;
-            }
-
-            username = usernameInput;
-            showLoader();
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'checkUser', username: username })
-                });
-                const result = await response.json();
-
-                if (result.success && result.exists) {
-                    // L'utilisateur existe, on le connecte
-                    const user = result.user;
-                    localStorage.setItem('praylink_user', JSON.stringify(user));
-                    setProfileEmoji(user.profileEmoji);
-                    document.getElementById('mainUsername').textContent = '@' + user.username;
-                    showNotification(`👋 Bienvenue, ${user.username} !`);
-                    goToPage('mainPage');
-                } else {
-                    // L'utilisateur n'existe pas, on continue l'inscription
-                    goToPage('profilePhotoPage');
-                }
-            } catch (error) {
-                showNotification('❌ Erreur réseau. Veuillez réessayer.');
-            } finally {
-                hideLoader();
-            }
-        }
-
-        async function registerUser() {
-            if (!username) {
-                showNotification('❌ Erreur : nom d\'utilisateur manquant.');
-                goToPage('usernamePage');
-                return;
-            }
-
-            showLoader();
-
-            const userData = {
-                username: username,
-                platform: selectedPlatform || 'instagram',
-                profileEmoji: profileEmoji || '🙏'
-            };
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'createUser', ...userData })
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    localStorage.setItem('praylink_user', JSON.stringify(userData));
-                    document.getElementById('mainUsername').textContent = '@' + userData.username;
-                    setProfileEmoji(userData.profileEmoji);
-                    showNotification('✅ Profil créé avec succès !');
-                    goToPage('premiumPage');
-                } else {
-                    showNotification(`❌ Erreur : ${result.error}`);
-                }
-            } catch (error) {
-                showNotification('❌ Erreur réseau. Impossible de créer le profil.');
-            } finally {
-                hideLoader();
-            }
         }
 
         function selectProfilePhoto() {
@@ -4181,7 +4307,7 @@
                         <button onclick="openReplyModal(${msg.id})" class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs interactive-btn hover:bg-opacity-30">💬 Répondre</button>
                     </div>
                 </div>
-            `;
+            `).join('');
         }
 
         // Fonctions pour les indices d'activité
@@ -6216,23 +6342,164 @@
             }
         });
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const usernameInput = document.getElementById('usernameInput');
-            if (usernameInput) {
-                usernameInput.addEventListener('input', function() {
-                    username = this.value;
-                });
+        // --- Nouveau flux d'inscription et de connexion ---
+
+        async function createAccount() {
+            const usernameInput = document.getElementById('usernameInput').value.trim();
+            if (!usernameInput) {
+                showNotification('❌ Veuillez entrer un nom d\'utilisateur.');
+                return;
             }
 
-            // Vérifier si un utilisateur est déjà connecté
+            username = usernameInput;
+            showLoader();
+
+            try {
+                // 1. Vérifier si le nom d'utilisateur est disponible
+                let response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'checkUser', username: username })
+                });
+                let result = await response.json();
+
+                if (result.success && result.exists) {
+                    showNotification('❌ Ce nom d\'utilisateur est déjà pris. Veuillez en choisir un autre.');
+                    hideLoader();
+                    return;
+                }
+
+                // 2. Si disponible, créer l'utilisateur
+                const userData = {
+                    username: username,
+                    platform: selectedPlatform || 'instagram',
+                    profileEmoji: '🙏' // Emoji par défaut
+                };
+
+                response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'createUser', ...userData })
+                });
+                result = await response.json();
+
+                if (result.success) {
+                    localStorage.setItem('praylink_user', JSON.stringify(userData));
+                    showNotification('✅ Profil créé avec succès !');
+                    showLinksPage(userData.username);
+                } else {
+                    showNotification(`❌ Erreur lors de la création : ${result.error}`);
+                }
+
+            } catch (error) {
+                showNotification('❌ Erreur réseau. Veuillez réessayer.');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function showLinksPage(username) {
+            const baseUrl = 'https://praylink-beta.vercel.app';
+            document.getElementById('sharingLink').value = `${baseUrl}/u/${username}`;
+            document.getElementById('loginLink').value = `${baseUrl}/profile/${username}`;
+            goToPage('linksPage');
+        }
+
+        function copyLink(inputId) {
+            const linkInput = document.getElementById(inputId);
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                showNotification('✅ Lien copié !');
+            } catch (err) {
+                showNotification('❌ Erreur lors de la copie');
+            }
+        }
+
+        function onContinueFromLinksPage() {
             const savedUser = localStorage.getItem('praylink_user');
             if (savedUser) {
                 const userData = JSON.parse(savedUser);
                 username = userData.username;
+                profileEmoji = userData.profileEmoji;
+                document.getElementById('mainUsername').textContent = '@' + username;
+                setProfileEmoji(profileEmoji);
+            }
+            goToPage('mainPage');
+        }
+
+        async function handleLoginFromUrl() {
+            const path = window.location.pathname;
+            const loginPath = '/profile/';
+
+            if (path.startsWith(loginPath)) {
+                const loginUsername = path.substring(loginPath.length).split('/')[0];
+                if (loginUsername) {
+                    showLoader();
+                    try {
+                        const response = await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'checkUser', username: loginUsername })
+                        });
+                        const result = await response.json();
+
+                        if (result.success && result.exists) {
+                            const user = result.user;
+                            localStorage.setItem('praylink_user', JSON.stringify(user));
+                            username = user.username;
+                            selectedPlatform = user.platform;
+                            profileEmoji = user.profileEmoji;
+
+                            document.getElementById('mainUsername').textContent = '@' + user.username;
+                            setProfileEmoji(user.profileEmoji);
+                            
+                            showNotification(`👋 Bienvenue, ${user.username} !`);
+                            goToPage('mainPage');
+                            window.history.replaceState({}, document.title, '/');
+                        } else {
+                            showNotification('❌ Profil non trouvé. Veuillez vérifier votre lien.');
+                            window.history.replaceState({}, document.title, '/');
+                            goToPage('welcomePage');
+                        }
+                    } catch (error) {
+                        showNotification('❌ Erreur réseau. Impossible de se connecter.');
+                        goToPage('welcomePage');
+                    } finally {
+                        hideLoader();
+                    }
+                    return true; // Indique qu'une tentative de connexion a eu lieu
+                }
+            }
+            return false; // Pas de tentative de connexion par URL
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            const usernameInput = document.getElementById('usernameInput');
+            if (usernameInput) {
+                usernameInput.addEventListener('input', function() {
+                    username = this.value.trim();
+                });
+            }
+
+            const loggedInViaUrl = await handleLoginFromUrl();
+            if (loggedInViaUrl) return;
+
+            // Si pas de connexion par URL, vérifier le localStorage
+            const savedUser = localStorage.getItem('praylink_user');
+            if (savedUser) {
+                const userData = JSON.parse(savedUser);
+                username = userData.username;
+                profileEmoji = userData.profileEmoji;
+                document.getElementById('mainUsername').textContent = '@' + username;
+                setProfileEmoji(profileEmoji);
                 goToPage('mainPage');
             }
+            // Sinon, la page d'accueil est déjà affichée par défaut
         });
+
     </script>
 </body>
 </html>
