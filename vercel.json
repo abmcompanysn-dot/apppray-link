@@ -12,6 +12,10 @@
             "dest": "/index.html"
         },
         {
+            "src": "/profile/(.*)",
+            "dest": "/index.html"
+        },
+        {
             "src": "/(.*)",
             "dest": "/index.html"
         }
