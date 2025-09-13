@@ -833,8 +833,24 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
             currentPage = pageId;
             
             if (pageId === 'mainPage') {
-                updateUserProfile();
-                updateUniversalLink();
+                // If we are arriving here from setup, username might not be set yet.
+                if (!username) {
+                    const usernameInput = document.getElementById('usernameInput');
+                    if (usernameInput && usernameInput.value) {
+                        username = usernameInput.value.replace('@', '');
+                    }
+                    if (!username) username = 'PrayerWarrior'; // default
+                }
+
+                // Save profile to localStorage
+                const userProfile = {
+                    username: username,
+                    emoji: profileEmoji
+                };
+                localStorage.setItem('praylink_userProfile', JSON.stringify(userProfile));
+
+                updateUserProfile(); // This sets the UI elements
+                updateUniversalLink(); // This sets the shareable link
             }
         }
 
@@ -2171,6 +2187,27 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
             showNotification(`📱 QR Code pour: ${link}`);
         }
         
+        function loadUserProfile() {
+            const savedProfile = localStorage.getItem('praylink_userProfile');
+            if (savedProfile) {
+                try {
+                    const userProfile = JSON.parse(savedProfile);
+                    username = userProfile.username;
+                    profileEmoji = userProfile.emoji;
+                    
+                    // Skip setup and go directly to the main page
+                    goToPage('mainPage');
+                    refreshInbox();
+                    return true; // Profile loaded
+                } catch (e) {
+                    console.error("Failed to parse user profile", e);
+                    localStorage.removeItem('praylink_userProfile');
+                    return false; // Profile corrupted
+                }
+            }
+            return false; // No profile found
+        }
+
         function generateAppsScript() {
             const appsScriptCode = `
 // PrayLink Google Apps Script
@@ -2494,6 +2531,13 @@ function initializeSheets() {
                 document.getElementById('sheetId').value = appConfig.sheetId || '';
             }
             
+            // First, check if we are on a response page URL
+            const isResponseUrl = checkUrlParams();
+
+            // If it's not a response page, then try to load the user's profile
+            // and show their dashboard.
+            if (!isResponseUrl) { loadUserProfile(); }
+
             // Charger le contenu personnalisé
             loadCustomContent();
             
@@ -2569,7 +2613,7 @@ function initializeSheets() {
         // Gestion des paramètres URL pour les réponses
         function checkUrlParams() {
             const path = window.location.pathname;
-            const match = path.match(/^\/u\/([^/]+)/);
+            const match = path.match(/^\/u\/([^/]+)/); // Matches /u/username
             
             if (match) {
                 const recipient = match[1];
@@ -2591,9 +2635,9 @@ function initializeSheets() {
                 // Cacher l'app principale et afficher la page de réponse
                 document.querySelector('.app-container').style.display = 'none';
                 document.getElementById('responsePage').classList.remove('hidden');
+                return true; // URL was handled
             }
+            return false; // URL was not for responding
         }
-
-        window.addEventListener('load', checkUrlParams);
     </script>
 </html>
