@@ -586,114 +586,79 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
                     </div>
                 </div>
                 
-                <!-- Lien unique universel -->
-                <div class="context-selector mx-4 mt-4">
-                    <div class="text-center mb-4">
-                        <div class="text-3xl mb-2">🔗</div>
-                        <h3 class="text-lg font-bold">Mon Lien PrayLink</h3>
-                        <p class="text-sm opacity-90">Un seul lien pour tous les contextes</p>
-                    </div>
+                <!-- Lien de Partage -->
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-2 text-blue-600">🔗 Mon Lien de Partage</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Partagez ce lien pour que vos amis puissent vous envoyer des messages anonymes.
+                    </p>
                     
-                    <div class="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
-                        <div class="text-xs opacity-75 mb-1">Ton lien unique :</div>
+                    <div class="bg-gray-100 rounded-xl p-4 mb-4">
+                        <div class="text-xs text-gray-500 mb-1">Votre lien à partager :</div>
                         <div class="text-sm font-mono break-all" id="universalLink">https://praylink.app/u/prayerwarrior</div>
                     </div>
                     
-                    <div class="flex space-x-2 mb-4">
-                        <button onclick="copyUniversalLink()" class="flex-1 bg-white bg-opacity-20 text-white py-2 rounded-lg text-sm font-medium interactive-btn">
+                    <div class="flex space-x-2">
+                        <button onclick="copyUniversalLink()" class="flex-1 bg-blue-500 text-white py-3 rounded-lg text-sm font-medium interactive-btn">
                             📋 Copier
                         </button>
-                        <button onclick="shareUniversalLink()" class="flex-1 bg-white bg-opacity-20 text-white py-2 rounded-lg text-sm font-medium interactive-btn">
+                        <button onclick="shareUniversalLink()" class="flex-1 bg-green-500 text-white py-3 rounded-lg text-sm font-medium interactive-btn">
                             📱 Partager
                         </button>
                     </div>
-                    
-                    <div class="text-xs opacity-75 text-center">
-                        Les gens pourront choisir le contexte en répondant
-                    </div>
                 </div>
-                
-                <!-- Sélecteur de contexte pour prévisualiser -->
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4">Prévisualiser avec contexte</h3>
+
+                <!-- Lien Personnel -->
+                <div class="p-6 border-t">
+                    <h3 class="text-lg font-semibold mb-2 text-red-600">🔒 Votre Lien Personnel</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Ne partagez <strong>jamais</strong> ce lien. C'est votre accès unique à ce tableau de bord. Si vous le perdez, votre compte sera perdu.
+                    </p>
+                    
+                    <div class="bg-gray-100 rounded-xl p-4 mb-4">
+                        <div class="text-xs text-gray-500 mb-1">Votre lien d'accès personnel :</div>
+                        <div class="text-sm font-mono break-all" id="personalAccessLink">https://praylink-beta.vercel.app/</div>
+                    </div>
+                    
+                    <button onclick="copyPersonalLink()" class="w-full bg-red-500 text-white py-3 rounded-lg text-sm font-medium interactive-btn">
+                        📋 Copier mon lien personnel
+                    </button>
+                </div>
+
+                <!-- Section de partage de contenu -->
+                <div class="p-6 border-t">
+                    <h3 class="text-lg font-semibold mb-4">📤 Partager du contenu</h3>
                     
                     <div class="space-y-3">
-                        <button onclick="previewContext('question')" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                        <button onclick="shareRandomVerse()" class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white p-4 rounded-2xl text-left interactive-btn">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <div class="font-bold mb-1">❓ Questions</div>
-                                    <div class="text-sm opacity-90">Questions bibliques et spirituelles</div>
+                                    <div class="font-bold mb-1">📖 Verset du jour</div>
+                                    <div class="text-sm opacity-90">Partager un verset inspirant</div>
                                 </div>
-                                <span class="text-2xl">→</span>
+                                <span class="text-2xl">📱</span>
                             </div>
                         </button>
                         
-                        <button onclick="previewContext('verse')" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                        <button onclick="shareRandomPrayer()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white p-4 rounded-2xl text-left interactive-btn">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <div class="font-bold mb-1">📖 Versets</div>
-                                    <div class="text-sm opacity-90">Partage de versets inspirants</div>
+                                    <div class="font-bold mb-1">🙏 Prière du jour</div>
+                                    <div class="text-sm opacity-90">Partager une prière</div>
                                 </div>
-                                <span class="text-2xl">→</span>
+                                <span class="text-2xl">📱</span>
                             </div>
                         </button>
                         
-                        <button onclick="previewContext('prayer')" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 rounded-2xl text-left interactive-btn">
+                        <button onclick="shareRandomTestimony()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 rounded-2xl text-left interactive-btn">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <div class="font-bold mb-1">🙏 Prières</div>
-                                    <div class="text-sm opacity-90">Demandes de prières anonymes</div>
+                                    <div class="font-bold mb-1">✨ Témoignage</div>
+                                    <div class="text-sm opacity-90">Partager un témoignage</div>
                                 </div>
-                                <span class="text-2xl">→</span>
+                                <span class="text-2xl">📱</span>
                             </div>
                         </button>
-                        
-                        <button onclick="previewContext('testimony')" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white p-4 rounded-2xl text-left interactive-btn">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <div class="font-bold mb-1">✨ Témoignages</div>
-                                    <div class="text-sm opacity-90">Partage de témoignages</div>
-                                </div>
-                                <span class="text-2xl">→</span>
-                            </div>
-                        </button>
-                    </div>
-                    
-                    <!-- Section de partage de contenu -->
-                    <div class="mt-8">
-                        <h3 class="text-lg font-semibold mb-4">📤 Partager du contenu</h3>
-                        
-                        <div class="space-y-3">
-                            <button onclick="shareRandomVerse()" class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 text-white p-4 rounded-2xl text-left interactive-btn">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <div class="font-bold mb-1">📖 Verset du jour</div>
-                                        <div class="text-sm opacity-90">Partager un verset inspirant</div>
-                                    </div>
-                                    <span class="text-2xl">📱</span>
-                                </div>
-                            </button>
-                            
-                            <button onclick="shareRandomPrayer()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white p-4 rounded-2xl text-left interactive-btn">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <div class="font-bold mb-1">🙏 Prière du jour</div>
-                                        <div class="text-sm opacity-90">Partager une prière</div>
-                                    </div>
-                                    <span class="text-2xl">📱</span>
-                                </div>
-                            </button>
-                            
-                            <button onclick="shareRandomTestimony()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white p-4 rounded-2xl text-left interactive-btn">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <div class="font-bold mb-1">✨ Témoignage</div>
-                                        <div class="text-sm opacity-90">Partager un témoignage</div>
-                                    </div>
-                                    <span class="text-2xl">📱</span>
-                                </div>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -766,6 +731,7 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
             
             <!-- Inbox Content -->
             <div id="inboxContent" class="hidden flex-1 flex flex-col">
+            <div id="inboxContent" class="hidden flex-1 flex flex-col overflow-y-auto">
                 <div class="flex items-center justify-between p-4 border-b bg-white">
                     <h3 class="text-lg font-semibold">Messages reçus</h3>
                     <button onclick="refreshInbox()" class="bg-purple-600 text-white px-3 py-2 rounded-full text-sm font-medium interactive-btn">
@@ -774,6 +740,7 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messagesList">
+                <div class="p-4 space-y-4" id="messagesList">
                     <!-- Messages exemple -->
                     <div class="bg-white rounded-2xl p-4 border border-gray-200">
                         <div class="flex items-start justify-between mb-2">
@@ -851,6 +818,7 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
 
                 updateUserProfile(); // This sets the UI elements
                 updateUniversalLink(); // This sets the shareable link
+                updatePersonalLink(); // This sets the personal link
             }
         }
 
@@ -942,22 +910,18 @@ David | J'étais berger,J'ai vaincu Goliath,J'ai écrit des psaumes</textarea>
             }
         }
 
-        function previewContext(context) {
-            const contextNames = {
-                question: 'Question',
-                verse: 'Verset',
-                prayer: 'Prière',
-                testimony: 'Témoignage'
-            };
-            
-            const messages = {
-                question: 'Quel est ton verset préféré ?',
-                verse: 'Partage un verset qui t\'inspire',
-                prayer: 'Pour quoi aimerais-tu qu\'on prie ?',
-                testimony: 'Partage un témoignage de foi'
-            };
-            
-            openResponsePage('Toi', messages[context], context);
+        function updatePersonalLink() {
+            const link = appConfig.baseUrl + '/';
+            document.getElementById('personalAccessLink').textContent = link;
+        }
+
+        function copyPersonalLink() {
+            const link = document.getElementById('personalAccessLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                showNotification('📋 Lien personnel copié ! Gardez-le en sécurité.');
+            }).catch(() => {
+                showNotification('❌ Erreur lors de la copie');
+            });
         }
 
         // ===== PAGE DE RÉPONSE =====
