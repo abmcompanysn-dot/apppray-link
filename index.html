@@ -207,28 +207,11 @@
                     <input type="text" id="usernameInput" placeholder="@tonnom" 
                            class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-lg focus:border-gray-900 focus:outline-none">
                 </div>
-                <button onclick="createAccount()" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl mb-4 interactive-btn hover:glow">
-                     Créer mon compte
+                
+                <button onclick="goToPage('profilePhotoPage')" class="w-full bg-gray-900 text-white font-semibold py-4 rounded-xl mb-4 interactive-btn hover:glow">
+                    Continuer
                 </button>
             </div>
-        </div>
-
-        <!-- Page 4: Liens de connexion -->
-        <div id="linksPage" class="hidden h-screen bg-white p-6 flex flex-col justify-center">
-            <div class="text-center mb-8">
-                <div class="w-24 h-24 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl">✅</div>
-                <h2 class="text-2xl font-bold mb-2">Compte créé avec succès !</h2>
-                <p class="text-gray-600">Voici vos liens. Conservez-les précieusement.</p>
-            </div>
-            <div class="space-y-6 mb-8">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">🔗 Votre Lien de Partage</label>
-                    <p class="text-xs text-gray-500 mb-2">Partagez ce lien pour recevoir des messages anonymes.</p>
-                    <div class="flex items-center bg-gray-100 rounded-xl p-2"><input type="text" id="sharingLink" class="flex-1 bg-transparent text-sm text-gray-700 border-none outline-none px-2" readonly=""><button onclick="copyLink('sharingLink')" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">Copier</button></div>
-                </div>
-                <div><label class="block text-sm font-bold text-red-600 mb-2">⚠️ VOTRE LIEN DE CONNEXION UNIQUE</label><p class="text-xs text-gray-500 mb-2">C'est le <strong>seul</strong> moyen d'accéder à votre compte. Ne le perdez pas !</p><div class="flex items-center bg-red-50 border border-red-200 rounded-xl p-2"><input type="text" id="loginLink" class="flex-1 bg-transparent text-sm text-red-700 font-semibold border-none outline-none px-2" readonly=""><button onclick="copyLink('loginLink')" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">Copier</button></div></div>
-            </div>
-            <button onclick="onContinueFromLinksPage()" class="w-full bg-gray-900 text-white font-bold py-4 rounded-xl interactive-btn hover:glow">Accéder à mon compte →</button>
         </div>
 
         <!-- Page 4: Photo de profil -->
@@ -2199,11 +2182,6 @@
 
     </div>
 
-    <!-- Loader Overlay -->
-    <div id="loader" class="fixed inset-0 bg-black bg-opacity-25 hidden items-center justify-center z-50">
-        <div class="w-16 h-16 border-4 border-white border-t-purple-500 rounded-full animate-spin"></div>
-    </div>
-
     <script>
         let currentPage = 'welcomePage';
         let selectedPlatform = '';
@@ -2216,11 +2194,11 @@
 
         // IMPORTANT: Remplacez cette URL par l'URL de votre script Google Apps Script déployé
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznqEPPRCC79rujx_rKALbzHftiJIZ2WP0-F-jPZ-GDNh6zT0sWCwhyyvNOVdmuR4oiMA/exec';
-        const BASE_URL = 'https://praylink-beta.vercel.app';
 
         // Loader functions
         function showLoader() { document.getElementById('loader').classList.remove('hidden'); document.getElementById('loader').classList.add('flex'); }
         function hideLoader() { document.getElementById('loader').classList.add('hidden'); document.getElementById('loader').classList.remove('flex'); }
+
 
         // Données d'indices d'activité
         const insightsData = {
@@ -2313,7 +2291,7 @@
                 comments: 5,
                 shares: 3,
                 isLiked: false,
-                link: 'https://praylink-beta.vercel.app/v/marie2024/1'
+                link: 'https://praylink.app/v/marie2024/1'
             },
             {
                 id: 2,
@@ -2327,7 +2305,7 @@
                 comments: 3,
                 shares: 2,
                 isLiked: true,
-                link: 'https://praylink-beta.vercel.app/v/davidfoi/2'
+                link: 'https://praylink.app/v/davidfoi/2'
             },
             {
                 id: 3,
@@ -2341,7 +2319,7 @@
                 comments: 7,
                 shares: 4,
                 isLiked: false,
-                link: 'https://praylink-beta.vercel.app/v/sarahlumiere/3'
+                link: 'https://praylink.app/v/sarahlumiere/3'
             },
             {
                 id: 4,
@@ -2355,7 +2333,7 @@
                 comments: 9,
                 shares: 6,
                 isLiked: true,
-                link: 'https://praylink-beta.vercel.app/v/paulespoir/4'
+                link: 'https://praylink.app/v/paulespoir/4'
             },
             {
                 id: 5,
@@ -2369,7 +2347,7 @@
                 comments: 12,
                 shares: 8,
                 isLiked: false,
-                link: 'https://praylink-beta.vercel.app/v/emmagrace/5'
+                link: 'https://praylink.app/v/emmagrace/5'
             }
         ];
 
@@ -3268,13 +3246,13 @@
         }
 
         function copyCurrentQuestion() {
-            const link = `${BASE_URL}/q/${currentQuestionIndex}`;
+            const link = `https://praylink.app/q/${currentQuestionIndex}`;
             showNotification('📋 Lien copié !');
         }
 
         function shareCurrentQuestion() {
             const currentQuestion = allQuestions[currentQuestionIndex];
-            const shareLink = `${BASE_URL}/q/${currentQuestionIndex}?u=${encodeURIComponent(username || 'PrayerWarrior')}`;
+            const shareLink = `https://praylink.app/q/${currentQuestionIndex}?u=${encodeURIComponent(username || 'PrayerWarrior')}`;
             
             // Créer le contenu de partage
             const shareText = `${currentQuestion.text}\n\nRéponds-moi anonymement ici 👇\n${shareLink}`;
@@ -3342,7 +3320,7 @@
 
         function shareCurrentVerset() {
             const currentVerset = allVersets[currentVersetIndex];
-            const shareLink = `${BASE_URL}/v/${currentVersetIndex}?u=${encodeURIComponent(username || 'PrayerWarrior')}`;
+            const shareLink = `https://praylink.app/v/${currentVersetIndex}?u=${encodeURIComponent(username || 'PrayerWarrior')}`;
             
             // Créer le contenu de partage
             const shareText = `"${currentVerset.text}"\n${currentVerset.ref}\n\nPartagé par ${username || '@PrayerWarrior'} sur PrayLink 🙏\n${shareLink}`;
@@ -4268,7 +4246,7 @@
                 sender: 'Anonyme #2',
                 avatar: '👤',
                 hasLink: true,
-                link: 'https://praylink-beta.vercel.app/u/marie2024'
+                link: 'https://praylink.app/u/marie2024'
             },
             {
                 id: 3,
@@ -4280,7 +4258,7 @@
                 sender: 'Anonyme #3',
                 avatar: '👤',
                 hasLink: true,
-                link: 'https://praylink-beta.vercel.app/u/david_foi'
+                link: 'https://praylink.app/u/david_foi'
             },
             {
                 id: 4,
@@ -4304,7 +4282,7 @@
                 sender: 'Anonyme #5',
                 avatar: '👤',
                 hasLink: true,
-                link: 'https://praylink-beta.vercel.app/u/sarah_lumiere'
+                link: 'https://praylink.app/u/sarah_lumiere'
             }
         ];
 
@@ -6016,7 +5994,7 @@
             document.getElementById('templatePreview').innerHTML = templateHTML;
             
             // Générer le lien personnel
-            const personalLink = `${BASE_URL}/u/${username || 'prayerwarrior'}`;
+            const personalLink = `https://praylink.app/u/${username || 'prayerwarrior'}`;
             document.getElementById('personalLink').value = personalLink;
             
             // Ouvrir le modal de template
@@ -6028,7 +6006,7 @@
 
         function createTemplateHTML(originalMessage, replyText) {
             const userDisplayName = username || 'PrayerWarrior';
-            const personalLink = `${BASE_URL}/u/${username || 'prayerwarrior'}`;
+            const personalLink = `https://praylink.app/u/${username || 'prayerwarrior'}`;
             
             return `
                 <div class="w-full bg-gradient-to-br from-purple-500 to-pink-600 text-white p-6 relative overflow-hidden" style="min-height: 400px;">
@@ -6380,7 +6358,6 @@
                 // 1. Vérifier si le nom d'utilisateur est disponible
                 let response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors', // Important pour les requêtes cross-origin
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'checkUser', username: username })
                 });
@@ -6401,7 +6378,6 @@
 
                 response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'createUser', ...userData })
                 });
@@ -6417,15 +6393,15 @@
 
             } catch (error) {
                 showNotification('❌ Erreur réseau. Veuillez réessayer.');
-                console.error("Erreur lors de la création du compte:", error);
             } finally {
                 hideLoader();
             }
         }
 
         function showLinksPage(username) {
-            document.getElementById('sharingLink').value = `${BASE_URL}/u/${username}`;
-            document.getElementById('loginLink').value = `${BASE_URL}/profile/${username}`;
+            const baseUrl = 'https://praylink-beta.vercel.app';
+            document.getElementById('sharingLink').value = `${baseUrl}/u/${username}`;
+            document.getElementById('loginLink').value = `${baseUrl}/profile/${username}`;
             goToPage('linksPage');
         }
 
@@ -6464,7 +6440,6 @@
                     try {
                         const response = await fetch(SCRIPT_URL, {
                             method: 'POST',
-                            mode: 'cors',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ action: 'checkUser', username: loginUsername })
                         });
@@ -6526,5 +6501,5 @@
         });
 
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e96eefe4796e2d',t:'MTc1Nzc4NTI2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
